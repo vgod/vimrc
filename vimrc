@@ -20,7 +20,9 @@ set ruler		" show the cursor position all the time
 set autoread		" auto read when file is changed from outside
 
 
-filetype plugin on
+filetype on           " Enable filetype detection
+filetype indent on    " Enable filetype-specific indenting
+filetype plugin on    " Enable filetype-specific plugins
 
 " many plugins use hotkeys that starts with <leader>
 let mapleader=","
@@ -77,7 +79,7 @@ set statusline+=\ \ \ %<%20.30(%{hostname()}:%{CurDir()}%)\
 set statusline+=%=%-14.(%l,%c%V%)\ %p%%/%L
 
 function! CurDir()
-    let curdir = substitute(getcwd(), '/Users/vgod', "~", "g")
+    let curdir = substitute(getcwd(), $HOME, "~", "")
     return curdir
 endfunction
 
@@ -132,6 +134,11 @@ set wmh=0                     " set the min height of a window to 0 so we can ma
 map <S-H> gT                  " go to prev tab 
 map <S-L> gt                  " go to next tab
 
+" new tab
+map <C-t><C-t> :tabnew<CR>
+" close tab
+map <C-t><C-w> :tabclose<CR> 
+
 " ,/ turn off search highlighting
 nmap <leader>/ :nohl<CR>      
 
@@ -146,3 +153,65 @@ function! TogglePaste()
     endif
 endfunction
 "}
+
+" allow multiple indentation/deindentation in visual mode
+vnoremap < <gv
+vnoremap > >gv
+
+" :cd. change working directory to that of the current file
+cmap cd. lcd %:p:h
+
+"--------------------------------------------------------------------------- 
+" programming shortcuts
+"--------------------------------------------------------------------------- 
+
+" Ctrl-[ jump out of the tag stack (undo Ctrl-])
+map <C-[> <ESC>:po<CR>
+
+" ,g generates the header guard
+map <leader>g :call IncludeGuard()<CR>
+fun! IncludeGuard()
+   let basename = substitute(bufname(""), '.*/', '', '')
+   let guard = '_' . substitute(toupper(basename), '\.', '_', "H")
+   call append(0, "#ifndef " . guard)
+   call append(1, "#define " . guard)
+   call append( line("$"), "#endif // for #ifndef " . guard)
+endfun
+
+
+
+"--------------------------------------------------------------------------- 
+"encoding settings
+"--------------------------------------------------------------------------- 
+set encoding=utf-8                                  
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=ucs-bom,utf-8,big5,latin1
+
+fun! ViewUTF8()
+	set encoding=utf-8                                  
+	set termencoding=big5
+endfun
+
+fun! UTF8()
+	set encoding=utf-8                                  
+	set termencoding=big5
+	set fileencoding=utf-8
+	set fileencodings=ucs-bom,big5,utf-8,latin1
+endfun
+
+fun! Big5()
+	set encoding=big5
+	set fileencoding=big5
+endfun
+
+
+"--------------------------------------------------------------------------- 
+" plugin settings
+"--------------------------------------------------------------------------- 
+
+" for vim-latex
+set grepprg=grep\ -nH\ $*
+let g:tex_flavor='latex'
+
+
