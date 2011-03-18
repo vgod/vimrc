@@ -42,6 +42,9 @@
 "   http://www.vim.org/scripts/script.php?script_id=1234
 "   :help yankring to see more info.
 "
+" VisIncr: Produce increasing/decreasing columns of numbers, dates, or daynames 
+"   http://www.vim.org/scripts/script.php?script_id=670
+"   
 " Cute Error Marker: showing error and warning icons on line
 "   http://www.vim.org/scripts/script.php?script_id=2653
 " Note: MacVim users need to enable "Use experimental renderer" to see
