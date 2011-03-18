@@ -2,6 +2,10 @@
 " https://github.com/vgod/vimrc
 "
 " see the "USEFUL SHORTCUTS" section to learn my shortcuts
+"
+" Other good references:
+" http://amix.dk/vim/vimrc.html
+" http://spf13.com/post/perfect-vimrc-vim-config-file
 
 " For pathogen.vim: auto load all plugins in .vim/bundle
 call pathogen#runtime_append_all_bundles()
@@ -67,7 +71,10 @@ set smarttab		" insert tabs on the start of a line according to context
 
 " status line {
 set laststatus=2
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ @\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
+set statusline=\ %{HasPaste()}%<%-25.40(%F%)%m%r%h\ %w\ \ 
+set statusline+=\ \ \ [%{&ff}/%Y] 
+set statusline+=\ \ \ %<%20.30(%{hostname()}:%{CurDir()}%)\ 
+set statusline+=%=%-14.(%l,%c%V%)\ %p%%/%L
 
 function! CurDir()
     let curdir = substitute(getcwd(), '/Users/vgod', "~", "g")
