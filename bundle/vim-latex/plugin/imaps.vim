@@ -486,9 +486,9 @@ vmap <silent> <Plug>IMAP_JumpBack          <C-\><C-N>`<i<c-r>=IMAP_Jumpfunc('b',
 if !hasmapto('<Plug>IMAP_JumpForward', 'i')
     imap <C-J> <Plug>IMAP_JumpForward
 endif
-if !hasmapto('<Plug>IMAP_JumpForward', 'n')
-    nmap <C-J> <Plug>IMAP_JumpForward
-endif
+"if !hasmapto('<Plug>IMAP_JumpForward', 'n')
+"    nmap <C-J> <Plug>IMAP_JumpForward
+"endif
 if exists('g:Imap_StickyPlaceHolders') && g:Imap_StickyPlaceHolders
 	if !hasmapto('<Plug>IMAP_JumpForward', 'v')
 		vmap <C-J> <Plug>IMAP_JumpForward
