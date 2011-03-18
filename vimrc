@@ -3,6 +3,10 @@
 "
 " see the "USEFUL SHORTCUTS" section to learn my shortcuts
 "
+" Language specific supports:
+" Latex: vim-latex
+" Restructured Text: ctrl-u 1~5 inserts Part/Chapter/Section headers
+"
 " Other good references:
 " http://amix.dk/vim/vimrc.html
 " http://spf13.com/post/perfect-vimrc-vim-config-file
@@ -31,14 +35,13 @@ let mapleader=","
 autocmd! bufwritepost .vimrc source ~/.vimrc
 
 
-if &t_Co > 2
-  syntax on		" syntax highlight
-  set hlsearch		" search highlighting
-endif
+syntax on		" syntax highlight
+set hlsearch		" search highlighting
 
 if has("gui_running")	" GUI color and font settings
   set guifont=Monaco:h16
   set background=dark 
+  set t_Co=256
   colors moria
 else
 " terminal color settings
@@ -61,6 +64,12 @@ set copyindent		" copy the previous indentation on autoindenting
 set ignorecase		" ignore case when searching
 set smartcase		" ignore case if search pattern is all lowercase,case-sensitive otherwise
 set smarttab		" insert tabs on the start of a line according to context
+
+" disable sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
 
 " TAB setting{
    set expandtab        "replace <TAB> with spaces
@@ -93,6 +102,7 @@ endfunction
 "}
 
 
+autocmd FileType c,cpp,cc  set cindent comments=sr:/*,mb:*,el:*/,:// cino=>s,e0,n0,f0,{0,}0,^-1s,:0,=s,g0,h1s,p2,t0,+2,(2,)20,*30
 
 "Restore cursor to file position in previous editing session
 set viminfo='10,\"100,:20,%,n~/.viminfo
@@ -155,6 +165,24 @@ vnoremap > >gv
 
 " :cd. change working directory to that of the current file
 cmap cd. lcd %:p:h
+
+" Writing Restructured Text (Sphinx Documentation) {
+   " Ctrl-u 1:    underline Parts w/ #'s
+   noremap  <C-u>1 yyPVr#yyjp
+   inoremap <C-u>1 <esc>yyPVr#yyjpA
+   " Ctrl-u 2:    underline Chapters w/ *'s
+   noremap  <C-u>2 yyPVr*yyjp
+   inoremap <C-u>2 <esc>yyPVr*yyjpA
+   " Ctrl-u 3:    underline Section Level 1 w/ ='s
+   noremap  <C-u>3 yypVr=
+   inoremap <C-u>3 <esc>yypVr=A
+   " Ctrl-u 4:    underline Section Level 2 w/ -'s
+   noremap  <C-u>4 yypVr-
+   inoremap <C-u>4 <esc>yypVr-A
+   " Ctrl-u 5:    underline Section Level 3 w/ ^'s
+   noremap  <C-u>5 yypVr^
+   inoremap <C-u>5 <esc>yypVr^A
+"}
 
 "--------------------------------------------------------------------------- 
 " PROGRAMMING SHORTCUTS
