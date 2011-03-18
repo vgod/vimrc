@@ -9,19 +9,19 @@ HOW TO INSTALL
 
 1. Check out from github
 
-      $ git clone https://github.com/vgod/vimrc ~/.vim
-      $ cd ~/.vim
-      $ git submodule update --init
+     $ git clone https://github.com/vgod/vimrc ~/.vim
+     $ cd ~/.vim
+     $ git submodule update --init
 
 2. Install ~/.vimrc and ~/.gvimrc
 
-      $ ./install-vimrc.sh
+     $ ./install-vimrc.sh
 
 3. Compile the Command-T plugin
 
-      $ cd .vim/bundle/command-t/ruby/command-t
-      $ ruby extconf.rb
-      $ make
+     $ cd .vim/bundle/command-t/ruby/command-t
+     $ ruby extconf.rb
+     $ make
   
 UPGRADE PLUGIN BUNDLES
 ----------------------
