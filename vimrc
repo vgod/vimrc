@@ -38,6 +38,10 @@
 "   http://www.vim.org/scripts/script.php?script_id=2540
 "   :help snipMate to see more info.
 "
+" YankRing: Maintains a history of previous yanks, changes and deletes 
+"   http://www.vim.org/scripts/script.php?script_id=1234
+"   :help yankring to see more info.
+"
 " Cute Error Marker: showing error and warning icons on line
 "   http://www.vim.org/scripts/script.php?script_id=2653
 " Note: MacVim users need to enable "Use experimental renderer" to see
@@ -47,6 +51,7 @@
 " Language specific supports:
 " Latex: vim-latex
 " Restructured Text: ctrl-u 1~5 inserts Part/Chapter/Section headers
+" CSS: ctrl-x ctrl-o to do omnicompletion 
 
 " Other good references:
 " http://amix.dk/vim/vimrc.html
@@ -245,6 +250,13 @@ fun! IncludeGuard()
 endfun
 
 
+" ctrl-x ctrl-o to do CSS completion 
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+" make this work for SASS and SCSS
+autocmd BufNewFile,BufRead *.scss             set ft=scss.css
+autocmd BufNewFile,BufRead *.sass             set ft=sass.css
+
+
 "--------------------------------------------------------------------------- 
 " ENCODING SETTINGS
 "--------------------------------------------------------------------------- 
@@ -306,3 +318,5 @@ endif
 
 
 
+" --- Command-T
+let g:CommandTMaxHeight = 15
