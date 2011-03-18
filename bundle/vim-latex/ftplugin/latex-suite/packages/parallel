@@ -1,0 +1,15 @@
+if exists("parallel_package_file")
+	finish
+endif
+let parallel_package_file = 1
+
+let g:TeX_package_option_parallel = ''
+
+let g:TeX_package_parallel = 
+\ 'env:Parallel,'
+\.'bra:ParallelLText,'
+\.'bra:ParallelRText,'
+\.'nor:ParallelPar,'
+\.'nor:tolerance'
+
+" vim:ft=vim:ff=unix:

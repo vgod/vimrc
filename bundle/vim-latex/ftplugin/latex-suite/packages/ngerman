@@ -1,0 +1,12 @@
+if exists("ngerman_package_file")
+	finish
+endif
+let ngerman_package_file = 1
+
+let g:TeX_package_ngerman = ''
+let g:TeX_package_option_ngerman = ''
+" For now just define the smart quotes.
+let b:Tex_SmartQuoteOpen = '"`'
+let b:Tex_SmartQuoteClose = "\"'"
+
+" vim:ft=vim:ff=unix:

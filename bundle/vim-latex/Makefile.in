@@ -1,0 +1,133 @@
+CVSUSER = srinathava
+SSHCMD = ssh1
+DIR1 = $(PWD)
+
+# The main target. This creates a latex suite archive (zip and tar.gz
+# format) ensuring that all the files in the archive are in unix format so
+# unix people can use it too...
+latexs:
+	# plugins:
+	zip -q latexSuite.zip plugin/imaps.vim
+	zip -q latexSuite.zip plugin/SyntaxFolds.vim
+	zip -q latexSuite.zip plugin/libList.vim
+	zip -q latexSuite.zip plugin/remoteOpen.vim
+	zip -q latexSuite.zip plugin/filebrowser.vim
+	# ftplugins
+	zip -q latexSuite.zip ftplugin/tex_latexSuite.vim
+	zip -q latexSuite.zip ftplugin/bib_latexSuite.vim
+	zip -q latexSuite.zip ftplugin/tex/*.vim
+	# files in the latex-suite directory. Skip the CVS files.
+	zip -q -R latexSuite.zip `find ftplugin/latex-suite -name '*' | grep -v .svn`
+	# documentation
+	zip -q latexSuite.zip doc/latex*.txt
+	zip -q latexSuite.zip doc/imaps*.txt
+	# indentation
+	zip -q latexSuite.zip indent/tex.vim
+	# compiler
+	zip -q latexSuite.zip compiler/tex.vim
+	# external tools
+	zip -q latexSuite.zip ltags
+
+	# Now to make a tar.gz file from the .zip file.
+	rm -rf $(TMP)/latexSuite0793
+	mkdir -p $(TMP)/latexSuite0793
+	cp latexSuite.zip $(TMP)/latexSuite0793/
+	( \
+		cd $(TMP)/latexSuite0793/ ; \
+		unzip -q -o latexSuite.zip ; \
+		\rm latexSuite.zip ; \
+		tar czf latexSuite.tar.gz * ; \
+		\mv latexSuite.tar.gz $(DIR1)/ ; \
+	)
+	mv latexSuite.zip latexSuite`date +%Y%m%d`.zip ; \
+	mv latexSuite.tar.gz latexSuite`date +%Y%m%d`.tar.gz ; \
+
+# target for removing archive files.
+clean:
+	rm -f latexSuite200*
+
+# make a local install directory.
+ltt:
+	rm -rf /tmp/ltt/vimfiles/ftplugin
+	cp -f latexSuite.zip /tmp/ltt/vimfiles/
+	cd /tmp/ltt/vimfiles; unzip latexSuite.zip
+
+# This target is related to a script I have on my sf.net account. That
+# script looks like:
+#
+# #!/bin/bash
+# cd ~/testing/vimfiles; \
+# cvs -q update; \
+# make clean; \
+# make; \
+# cp latexsuite.* ~/htdocs/download/
+#
+# Doing a release via sf.net has a couple of advantages:
+# - I do not have to bother with CRLF pain anymore because the copy on
+#   sf.net will always have unix style EOLs.
+# - The process is much faster because I only need to communicate a command
+#   from my computer to sf.net. The rest is done locally on the sf.net
+#   server.
+release:
+	$(SSHCMD) $(CVSUSER)@vim-latex.sf.net /home/groups/v/vi/vim-latex/bin/upload
+
+updoc:
+	$(SSHCMD) $(CVSUSER)@vim-latex.sf.net /home/groups/v/vi/vim-latex/bin/updoc
+
+# This is another target akin to the release: target. This target updates
+# the htdocs directory of the latex-suite project to the latest CVS
+# version.
+# This is again related to the uphtdocs script on my sf.net account which
+# looks like:
+# #!/bin/sh
+#
+# # update the htdocs directory
+# cd /home/groups/v/vi/vim-latex/htdocs; cvs -q update
+# # update the packages directory
+# cd /home/groups/v/vi/vim-latex/htdocs/packages; cvs -q update
+uphtdocs:
+	$(SSHCMD) $(CVSUSER)@vim-latex.sf.net /home/groups/v/vi/vim-latex/bin/uphtdocs
+	
+# Automatically generate the Changelog file using the cvs2cl utility
+#
+# Arguments:
+# -S			add a seperating line between filename and log
+#  --no-wrap	Do not attempt to format the Changelog comments
+#  -f			file to write the Changelog to.
+changelog:
+	cvs2cl -S --no-wrap -f ftplugin/latex-suite/ChangeLog
+
+# rsync is like cp (copy) on steroids.  Here are some useful options:
+# -C	auto ignore like CVS
+# -r	recurse into directories
+# -t	preserve times
+# -u	update (do not overwrite newer files)
+# -W	whole files, no incremental checks (default for local usage)
+# --existing	only update files that already exist
+# --exclude	exclude files matching the pattern
+# -n	dry run (for testing)
+
+# Usage:  after "cvs update", do
+#   make install [VIMFILES=path/to/vimfiles]
+# Before "cvs commit", do
+#   make stallin [VIMFILES=path/to/vimfiles]
+# If you have made changes in both directories, and want to keep the most
+# recent versions, do
+#   make sync [VIMFILES=path/to/vimfiles]
+# Note:  defining VIMFILES when you invoke make overrides the value below.
+# Warning:  install and stallin do not check modification times!
+
+VIMFILES=${HOME}/.vim
+EXCLUDE="--exclude='*~' --exclude='*.swp' --exclude='makefile'"
+
+install:
+	rsync -CrtW ${EXCLUDE}	. ${VIMFILES}
+
+# stallin = reverse install
+# If you can think of a better name for this target, be my guest!
+stallin:
+	rsync -CrtW --existing ${VIMFILES}/ .
+
+sync:
+	rsync -CrtuW ${EXCLUDE}	. ${VIMFILES}
+	rsync -CrtuW --existing ${VIMFILES}/ .

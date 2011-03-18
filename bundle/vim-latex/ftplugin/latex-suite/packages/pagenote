@@ -1,0 +1,26 @@
+" Pagenote package support v 0.1 2010-02-17
+" This file has been written by
+" Andreas Wagner <Andreas dot Wagner at em dot uni-frankfurt dot de>
+" based on the documentation of
+" pagenote 27 September 2004
+" It can be used, modified and distributed according to the vim license.
+
+
+if exists("pagenote_package_file")
+	finish
+endif
+let pagenote_package_file = 1
+
+let g:TeX_package_option_pagenote = 
+\ 'continuous,'
+\.'page'
+
+let g:TeX_package_pagenote =
+\ 'sbr:preamble,'
+\.'nor:makepagenote,'
+\.'sbr:regular,'
+\.'nob:pagenote[<+lemma+>]{<+note+>},'
+\.'sbr:end,'
+\.'nor:printnotes,'
+\.'nor:printnotes*'
+

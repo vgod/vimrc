@@ -73,7 +73,7 @@ set smarttab		" insert tabs on the start of a line according to context
 
 " status line {
 set laststatus=2
-set statusline=\ %{HasPaste()}%<%-25.40(%F%)%m%r%h\ %w\ \ 
+set statusline=\ %{HasPaste()}%<%-15.40(%F%)%m%r%h\ %w\ \ 
 set statusline+=\ \ \ [%{&ff}/%Y] 
 set statusline+=\ \ \ %<%20.30(%{hostname()}:%{CurDir()}%)\ 
 set statusline+=%=%-14.(%l,%c%V%)\ %p%%/%L
@@ -210,8 +210,17 @@ endfun
 " plugin settings
 "--------------------------------------------------------------------------- 
 
-" for vim-latex
+" ------- vim-latex {
+
+" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
+" can be called correctly.
+set shellslash
 set grepprg=grep\ -nH\ $*
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
 let g:tex_flavor='latex'
+
+"}
 
 

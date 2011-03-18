@@ -1,0 +1,17 @@
+====================================
+Generating Latex-Suite documentation
+====================================
+
+You need:
+- xsltproc
+- Docbook XSL stylesheets (*)
+- Docbook DTD (*)
+
+(*) These files will be downloaded every time you create the documentation,
+unless you install or download them.
+
+On Fedora, you can run as root:
+
+yum install libxslt docbook-style-xsl docbook-dtds
+
+to install the required packages.

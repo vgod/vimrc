@@ -1,0 +1,19 @@
+if exists("outliner_package_file")
+	finish
+endif
+let outliner_package_file = 1
+
+let g:TeX_package_option_outliner = ''
+
+let g:TeX_package_outliner = 
+\ 'env:Outline,'
+\.'bra:Level,'
+\.'bra:SetBaseLevel,'
+\.'sep:preamble,'
+\.'bra:OutlinePageBreaks,'
+\.'bra:OutlinePageBreaks,'
+\.'bra:OutlineLevelStart,'
+\.'bra:OutlineLevelCont,'
+\.'bra:OutlineLevelEnd'
+
+" vim:ft=vim:ff=unix:

@@ -1,0 +1,42 @@
+" Fixme package support v 0.1 2010-02-17
+" This file has been written by
+" Andreas Wagner <Andreas dot Wagner at em dot uni-frankfurt dot de>
+" based on the documentation of
+" fixme November 28 2007
+" It can be used, modified and distributed according to the vim license.
+
+
+if exists("fixme_package_file")
+	finish
+endif
+let fixme_package_file = 1
+
+let g:TeX_package_option_fixme = 
+\ 'draft,'
+\.'final,'
+\.'silent,'
+\.'nosilent,'
+\.'inline,'
+\.'margin,'
+\.'marginclue,'
+\.'footnote,'
+\.'index,'
+\.'noinline,'
+\.'nomargin,'
+\.'nomarginclue,'
+\.'nofootnote,'
+\.'noindex'
+
+let g:TeX_package_fixme =
+\ 'sbr:simple,'
+\.'nob:fixme[<+layout+>]{<+note+>},'
+\.'nob:fxnote[<+layout+>]{<+note+>},'
+\.'nob:fxwarning[<+layout+>]{<+note+>},'
+\.'nob:fxerror[<+layout+>]{<+note+>},'
+\.'sbr:environments,'
+\.'eno:afixme[<+summary+>],'
+\.'eno:anfxnote[<+summary+>],'
+\.'eno:anfxwarning[<+summary+>],'
+\.'eno:anfxerror[<+summary+>],'
+\.'sbr:other,'
+\.'nor:listoffixmes'

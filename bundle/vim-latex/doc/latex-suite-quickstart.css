@@ -1,0 +1,182 @@
+/* 
+ * Authors: Srinath Avadhanula and Mikolaj Machowski
+ * This style file borrows some elements from main.css, the style file used
+ * in cream.sf.net
+ *
+ * */
+P { 
+	font-size : 12pt ;
+	font-family : helvetica, arial, verdana, sans-serif ;
+	vertical-align : top;
+}
+DT { 
+	font-size : 11pt ;
+	font-family : helvetica, arial, verdana, sans-serif ;
+	vertical-align : top;
+}
+LI { 
+	font-size : 12pt ;
+	font-family : helvetica, arial, verdana, sans-serif ;
+	vertical-align : top;
+}
+
+DIV.header { 
+	margin : 0.5cm ;
+	width : 800px ;
+	height : 100 
+}
+.note {
+}
+
+TD { 
+	font-size : 11pt ;
+	font-family : helvetica, arial, verdana, sans-serif ;
+	vertical-align : top;
+}
+TD.menu { 
+	text-align : center ;
+	font-family : verdana, helvetica, sans-serif 
+}
+TD.footright { 
+	text-align : right ;
+	font-size : 10pt ;
+	font-family : verdana, helvetica, sans-serif 
+}
+TD.leftpanel { 
+	font-size: 14px ;
+	font-family: verdana, helvetica, sans-serif ;
+	vertical-align: top ;
+	width: 150px;
+	padding: 15px;
+	background-color: #88aaaa;
+}
+TD.mainpanel { 
+	font-size : 12pt ;
+	font-family : helvetica, arial, verdana, sans-serif ;
+	vertical-align : top;
+	padding: 15px;
+}
+TD.footpanel { 
+	font-size: 12px ;
+	font-family: verdana, helvetica, sans-serif ;
+	vertical-align: top ;
+	text-align: right;
+	padding: 5px;
+	background-color: #88aaaa;
+}
+.navigation {
+	vertical-align: top;
+	width: 150px;
+	padding: 15px;
+	background-color: #445555;
+	color: #fffcfc;
+} 
+.navheader {
+	margin-top: -0.5em;
+	margin-bottom: 0.5em;
+	text-align: right;
+	color: #446644;
+	font-size: 14px;
+    font-weight: bold;
+}
+
+SPAN.menu {
+	text-align : center ;
+	font-size : 12pt ;
+	font-family : verdana, helvetica, sans-serif 
+}
+
+DIV.merit {
+	margin : 0.5cm ;
+	width : 800px 
+}
+
+TABLE.meritum {
+	margin : 0.5cm ;
+	border : 0 
+}
+.foot {
+	margin : 0.5cm ;
+	width : 800px 
+}
+.head { 
+	margin : 0.5cm ; 
+}
+
+CODE {
+	font-family: "Andale Mono", "Courier New", "Courier", monospace;
+	background-color: #eef0f3;
+	white-space: nowrap;
+}
+
+.singlesmall {
+	font-size: 14px;
+}
+
+.doublesmall {
+	font-size: 12px;
+}
+
+
+DIV.footer {
+	margin : 0.5cm ;
+	width : 800px 
+}
+.qa {
+	margin : 0.5cm ;
+	font-size : 16px;
+	font-weight : bold;
+}
+.ans {
+	margin : 0.5cm ;
+	font-weight : normal;
+}
+
+H2.hline {
+	text-align : center ;
+	font-family : verdana, helvetica, sans-serif 
+}
+
+A.extlinks {
+	font-size : 11pt ;
+	font-family : verdana, helvetica, sans-serif ;
+	font-weight : bold 
+}
+
+TT {
+	font-family: courier,sans-serif; 
+	font-size: 11pt; 
+}
+PRE.programlisting {
+	font-family: courier,sans-serif; 
+	font-size: 10pt; 
+	background-color:#eef0f3;
+    border-color: #000000;
+    border-width: 1px;
+    border-style: solid;
+}
+SPAN.conflict {
+	font-size : small ;
+	font-family: courier,sans-serif; 
+	color : #DD4444;
+}
+HR.navig {
+	color: #446644;
+	height: 1px;
+	margin-top: 1em;
+	border-top: 0px;	/* Mozilla work-around to eliminate "groove" */
+}
+A.question {
+	color: #000000;
+	height: 1px;
+	margin-top: 1em;
+	border-top: 0px;	/* Mozilla work-around to eliminate "groove" */
+}
+A.question:hover {
+	color: #000000;
+	background-color: #eef0f3;
+	height: 1px;
+	margin-top: 1em;
+	border-top: 0px;	/* Mozilla work-around to eliminate "groove" */
+}
+

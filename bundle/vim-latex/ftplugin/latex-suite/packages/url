@@ -1,0 +1,24 @@
+if exists("url_package_file")
+	finish
+endif
+let url_package_file = 1
+
+let g:TeX_package_option_url =
+\ 'hyphens,'
+\.'obeyspaces,'
+\.'spaces,'
+\.'T1'
+
+let g:TeX_package_url = 
+\ 'bra:urlstyle,'
+\.'bra:url,'
+\.'bra:path,'
+\.'bra:urldef'
+
+" TODO uncomment if you figure out
+" 	1. how to get this syn command to work every time instead of only the
+" 	   first time this file is sourced.
+" syn region texZone    start="\\url{"   end="}\|%stopzone\>"
+" syn region texZone    start="\\path{"   end="}\|%stopzone\>"
+
+" vim:ft=vim:ff=unix:

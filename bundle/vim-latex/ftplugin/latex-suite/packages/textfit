@@ -1,0 +1,12 @@
+if exists("textfit_package_file")
+	finish
+endif
+let textfit_package_file = 1
+
+let g:TeX_package_option_textfit = ''
+
+let g:TeX_package_textfit = 
+\ 'brd:scaletowidth,'
+\.'brd:scaletoheight'
+
+" vim:ft=vim:ff=unix:

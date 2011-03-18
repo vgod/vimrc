@@ -1,0 +1,104 @@
+" Csquotes package support v 0.1 2010-02-17
+" This file has been written by
+" Andreas Wagner <Andreas dot Wagner at em dot uni-frankfurt dot de>
+" based on the documentation of
+" csquotes 4.4a, July 4 2009
+" It can be used, modified and distributed according to the vim license.
+
+
+if exists("csquotes_package_file")
+	finish
+endif
+let csquotes_package_file = 1
+
+let g:TeX_package_option_csquotes = 
+\ 'strict=,'
+\.'babel=,'
+\.'maxlevel=,'
+\.'style=,'
+\.'danish=,'
+\.'english=,'
+\.'french=,'
+\.'german=,'
+\.'italian=,'
+\.'norwegian=,'
+\.'portuguese=,'
+\.'spanish=,'
+\.'swedish='
+
+let g:TeX_package_csquotes =
+\ 'sbr:basic,'
+\.'bra:enquote{<+text+>},'
+\.'bra:enquote*{<+text+>},'
+\.'brs:textquote[<+cite+>][<+punct+>]{<+text+>},'
+\.'brs:textquote*[<+cite+>][<+punct+>]{<+text+>},'
+\.'brs:blockquote[<+cite+>][<+punct+>]{<+text+>},'
+\.'sbr:foreign_text,'
+\.'brd:foreignquote{<+lang+>}{<+text+>},'
+\.'brd:foreignquote*{<+lang+>}{<+text+>},'
+\.'brd:hyphenquote{<+lang+>}{<+text+>},'
+\.'brd:hyphenquote*{<+lang+>}{<+text+>},'
+\.'brs:foreigntextquote{<+lang+>}[<+cite+>][<+punct+>]{<+text+>},'
+\.'brs:foreigntextquote*{<+lang+>}[<+cite+>][<+punct+>]{<+text+>},'
+\.'brs:hyphentextquote{<+lang+>}[<+cite+>][<+punct+>]{<+text+>},'
+\.'brs:hyphentextquote*{<+lang+>}[<+cite+>][<+punct+>]{<+text+>},'
+\.'brs:foreignblockquote{<+lang+>}[<+cite+>][<+punct+>]{<+text+>},'
+\.'brs:hyphenblockquote{<+lang+>}[<+cite+>][<+punct+>]{<+text+>},'
+\.'sbr:active_quotes,'
+\.'bra:MakeOuterQuote{<+character+>},'
+\.'bra:MakeInnerQuote{<+character+>},'
+\.'brd:MakeAutoQuote{<+opening_character+>}{<+closing_character+>},'
+\.'brd:MakeAutoQuote*{<+opening_character+>}{<+closing_character+>},'
+\.'brs:MakeForeignQuote{<+lang+>}{<+opening_character+>}{<+closing_character+>},'
+\.'brs:MakeForeignQuote*{<+lang+>}{<+opening_character+>}{<+closing_character+>},'
+\.'brs:MakeHyphenQuote{<+lang+>}{<+opening_character+>}{<+closing_character+>},'
+\.'brs:MakeHyphenQuote*{<+lang+>}{<+opening_character+>}{<+closing_character+>},'
+\.'brs:MakeBlockQuote{<+opening_character+>}{<+delimiter+>}{<+closing_character+>},'
+\.'brs:MakeForeignBlockQuote{<+lang+>}{<+opening_character+>}{<+delimiter+>}{<+closing_character+>},'
+\.'brs:MakeHyphenBlockQuote{<+lang+>}{<+opening_character+>}{<+delimiter+>}{<+closing_character+>},'
+\.'nor:EnableQuote,'
+\.'nor:DisableQuotes,'
+\.'nor:VerbatimQuotes,'
+\.'nor:DeleteQuotes,'
+\.'sbr:automatic_citation,'
+\.'brs:textcquote[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:textcquote*[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:foreigntextcquote{<+lang+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:foreigntextcquote*{<+lang+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:hyphentextcquote{<+lang+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:hyphentextcquote*{<+x+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:blockcquote[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:foreignblockcquote{<+lang+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'brs:hyphenblockcquote{<+lang+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>]{<+text+>},'
+\.'sbr:display_quotes,'
+\.'ens:displayquote:[<+cite+>][<+punct+>],'
+\.'ens:foreigndisplayquote:{<+lang+>}[<+cite+>][<+punct+>],'
+\.'ens:hyphendisplayquote:{<+lang+>}[<+cite+>][<+punct+>],'
+\.'ens:displaycquote:[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>],'
+\.'ens:foreigndisplaycquote:{<+lang+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>],'
+\.'ens:hyphendisplaycquote:{<+lang+>}[<+prenote+>][<+postnote+>]{<+key+>}[<+punct+>],'
+\.'sbr:config,'
+\.'nob:setquotestyle,'
+\.'nor:setquotestyle*,'
+\.'brs:DeclareQuoteStyle[<+variant+>]{<+style+>}[<+outer_init+>][<+inner_init+>]{<+opening_outer_mark+>}[<+middle_outer_mark+>]{<+closing_outer_mark+>}[<+kern+>]{<+opening_inner_mark+>}[<+middle_inner_mark+>]{<+closing_inner_mark+>},'
+\.'brs:DeclareQuoteAlias[<+variant+>]{<+style+>}{<+alias+>},'
+\.'bra:DeclareQuoteOption{<+style+>},'
+\.'bra:ExecuteQuoteOptions{<+key=value+>},'
+\.'brs:DeclarePlainStyle{<+opening_outer_mark+>}{<+closing_outer_mark+>}{<+opening_inner_mark+>}{<+closing_inner_mark+>},'
+\.'bra:SetBlockThreshold{<+integer+>},'
+\.'bra:SetBlockEnvironment{<+environment+>},'
+\.'bra:SetCiteCommand{<+command+>},'
+\.'sbr:helper_expressions,'
+\.'brd:ifblockquote,'
+\.'brd:ifquotepunct,'
+\.'brd:ifquoteterm,'
+\.'brd:ifquotecolon,'
+\.'brd:ifquotecomma,'
+\.'brd:ifquoteexcmlam,'
+\.'brd:ifquotequestion,'
+\.'brd:ifquotesemicolon,'
+\.'brs:ifstringblank{<+string+>}{<+true+>}{<+false+>}'
+
+let g:TeX_SmartQuoteOpen 	= "\\enquote\{"
+let g:TeX_SmartQuoteClose 	= "\}"
+

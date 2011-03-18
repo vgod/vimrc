@@ -1,0 +1,4665 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+    "docbook-xml/docbookx.dtd" 
+[<!ENTITY dummy      "dummy">
+ <!ENTITY date       "$Date$">
+ <!ENTITY ls         "Latex-Suite">
+ <!ENTITY latex      "LaTeX">
+ <!ENTITY vim        "Vim">
+ <!ENTITY ph         "&lt;++&gt;">
+]>
+<article lang="en">
+ <articleinfo id="articleinfo">
+
+  <title id="articleinfo-title">&ls; Reference</title>
+
+  <author>
+   <firstname>Srinath</firstname>
+   <surname>Avadhanula</surname>
+   <affiliation>
+    <address><email>srinath AT fastmail DOT fm</email></address>
+   </affiliation>
+  </author>
+  <author>
+   <firstname>Mikolaj</firstname>
+   <surname>Machowski</surname>
+   <affiliation>
+    <address><email>mikmach AT wp DOT pl</email></address>
+   </affiliation>
+  </author>
+
+  <date>&date;</date>
+  <abstract>
+   <para>
+    &ls; attempts to provide a comprehensive set of tools to
+    view, edit and compile LaTeX documents in Vim. Together, they
+    provide tools starting from macros to speed up editing LaTeX
+    documents to functions for forward searching .dvi documents.
+    &ls; has been possible because of the contributions of many
+    people. Please see <link
+     linkend="latex-suite-credits">latex-suite-credits</link> for a list of
+    people who have helped.
+   </para>
+   <para>
+    &ls; is released under the Vim charityware license. For
+    license and conditions of use look at |copyright|. Replace all
+    occurrences of ``Vim'' with ``Latex-Suite''. The current copyright
+    holders of &ls; are Srinath Avadhanula and Mikolaj Machowski.
+   </para>
+   <para>
+    Homepage: <ulink url="http://vim-latex.sourceforge.net">http://vim-latex.sourceforge.net</ulink>
+   </para>
+  </abstract>
+ </articleinfo>
+ <section id="recommended-settings">
+  <title>Installation and recommended Settings</title>
+  <para>
+   If you are reading this, it most probably means that you have already
+   installed &ls; and the help files. If this is not the case, follow the
+   detailed instructions on <ulink
+    url="http://vim-latex.sourceforge.net/index.php?subject=download">&ls;'s
+    download page</ulink>.
+  </para>
+  <para>
+   Make sure that you create a few necessary settings in your
+   <literal>~/.vimrc.</literal>
+   <programlisting>
+" REQUIRED. This makes vim invoke &ls; when you open a tex file.
+filetype plugin on
+
+" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
+" can be called correctly.
+set shellslash
+
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse &ls;. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+
+" OPTIONAL: This enables automatic indentation as you type.
+filetype indent on
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+</programlisting>
+  </para>
+  <para>
+   In addition, the following settings could go in your ~/.vim/ftplugin/tex.vim
+   file:
+   <programlisting>" this is mostly a matter of taste. but LaTeX looks good with just a bit
+" of indentation.
+set sw=2
+" TIP: if you write your \label's as \label{fig:something}, then if you
+" type in \ref{fig: and press &lt;C-n&gt; you will automatically cycle through
+" all the figure labels. Very useful!
+set iskeyword+=:
+</programlisting>
+  </para>
+ </section>
+ <section id="latex-suite-templates">
+  <title>Inserting Templates</title>
+  <para>
+   This functionality is available via the <literal>TeX-Suite &gt;
+    Templates</literal> menu.
+   This module provides a way to insert custom templates at the beginning of the
+   current file.
+  </para>
+  <para>
+   When &ls; first starts up, it scans the
+   <literal>$VIM/ftplugin/latex-suite/templates/</literal>
+   directory and creates menu items based on the files found there. When
+   you select a template from this menu, the file will be read in above
+   the first line of the current file.
+  </para>
+  <para>
+   A template file can utilize placeholders for initializing the cursor
+   position when the template is read in and subsequent movement. In
+   addition, template files can contain dynamic elements such as the
+   time of creation of a file etc, by using vim expressions.
+  </para>
+  <para>
+   You can place your own templates in the
+   <literal>$VIM/ftplugin/latex-suite/templates/</literal> directory in
+   order for them to be available via the menu. Unless &ls; releases a
+   template with the same name, these files should not get over-written
+   when you install a new release over an existing one.
+  </para>
+  <note>
+   <para>
+    Templates are also accessible for non-gui users with the command
+    |<literal>:TTemplate</literal>|. The argument should be name of
+    the corresponding template file.  If the command is called
+    without arguments (preferred usage), then a list of available
+    templates is displayed and the user is asked to choose one of
+    them.
+   </para>
+  </note>
+ </section>
+ <section id="latex-macros">
+  <title>&ls; Macros</title>
+  <para>
+   &ls; ships with a very comprehensive set of insert mode and
+   |visual-mode| mappings and menu items to typeset most of the LaTeX
+   elements.
+  </para>
+  <note>
+   <para>
+    These mappings are are not standard mappings in the sense that
+    only the last character is mapped. See plugin/imaps.vim for
+    further documentation. For example, in the case of the mapping
+    <literal>EFI</literal> provided by &ls; you can press the characters
+    '<literal>E</literal>', '<literal>F</literal>' and '<literal>I</literal>'
+    as slowly as you wish (unlike the normal <literal>imap</literal> command
+    where <literal>timeout</literal> issues are involved). The characters are
+    visible as you type them (unlike normal <literal>imap</literal>s) and you
+    can use the movement or backspace key to correct yourself unlike normal
+    mappings.
+   </para>
+  </note>
+  <anchor id="place-holder" />
+  <note id="place-holders">
+   <title>Place Holders</title>
+   <para>
+    Almost all macros provided in &ls; implement Stephen Riem's bracketing
+    system and Gergely Kontra's <literal>JumpFunc()</literal> for handling
+    place-holders. This consists of using "place-holders" to mark off
+    locations where the next relevant editing has to be done. As an example,
+    when you type <literal>EFI</literal> in |insert-mode|, you will get the
+    following:
+    <programlisting>\begin{figure}[h]
+    \centerline{\psfig{figure=&lt;+eps file+&gt;}}
+    \caption{&lt;+caption text+&gt;}
+    \label{fig:&lt;+label+&gt;}
+\end{figure}&lt;++&gt;</programlisting>
+    The text <literal>&lt;+eps file+&gt;</literal> will be selected and
+    you will be left in |select-mode| so that you can continue typing
+    straight away. After having typed in the file name, you can press
+    <literal>&lt;Ctrl-J&gt;</literal> (while still in insert-mode). This will
+    take you directly to the next "place-holder". i.e, <literal>&lt;+caption
+     text+&gt;</literal> will be visually selected with Vim in select mode
+    again for typing in the caption. This saves on a lot of key presses.
+   </para>
+  </note>
+  <note id="overriding-macros">
+   <title>Over-riding &ls; Macros</title>
+   <para>
+    If you wish to change these macros from their default values, for
+    example, if you wish to change <literal>`w</literal> to expand to
+    <literal>\omega</literal> instead of its default expansion to
+    <literal>\wedge</literal>, you should use the <literal>IMAP</literal>
+    function as described in the <link linkend="ls-new-macros">Using 
+     IMAP()</link> section.
+   </para>
+   <para>
+    An important thing to note is that if you wish to over-ride macros
+    created by &ls; rather than merely create new macros, you should place
+    the <literal>IMAP()</literal> calls in a script which gets sourced
+    after the files in &ls;. A good place typically is as a file-type
+    plugin file in the
+    <literal>~/.vim/after/ftplugin/</literal> directory. (Use
+    <literal>~/vimfiles</literal> if you are using
+    <literal>WINDOWS</literal>). For example to over-ride
+    <literal>`w</literal> to <literal>\omega</literal> instead of
+    <literal>\wedge</literal>, place the following line in (say)
+    <literal>~/.vim/after/ftplugin/tex_macros.vim</literal>:
+    <programlisting>call IMAP('`w', '\omega', 'tex')</programlisting>
+   </para>
+   <note>
+    <para>
+     It is important to use a file-name which will get sourced on a
+     <literal>FileType</literal> event. Therefore you must use a file-name
+     which conforms to the standards as described in
+     <literal>|ftplugin-name|</literal>.
+    </para>
+   </note>
+  </note>
+  <note id="pausing-imaps">
+   <title>Pausing Macro expansion</title>
+   <para>
+    If you wish to temporarily suspend the imaps functionality, then you
+    can set the <literal>Imap_FreezeImap</literal> to 1. If you set
+    <literal>g:Imap_FreezeImap</literal> to 1, then it will be a
+    system-wide setting. Setting <literal>b:Imap_FreezeImap</literal> will
+    affect only the current buffer.
+   </para>
+  </note>
+  <para>
+   The following sections describe the various editing macros provided
+   by &ls;.
+  </para>
+  <section id="environment-mappings">
+   <title>Environment Mappings</title>
+   &ls; provides a rich set of mappings to insert, enclose and modify
+   &latex; environments, i.e, <literal>\begin{...} ... \end{...}</literal>
+   pairs.
+   <section id="inserting-environments">
+    <title>Inserting Environments</title>
+    <para>
+     &ls; provides the following ways to insert environments
+    </para>
+    <section id="inserting-env-f5">
+     <title>Method 1: Pressing <literal>&lt;F5&gt;</literal></title>
+     <para>
+      If you press <literal>&lt;F5&gt;</literal> in the insert or normal
+      mode while on an empty line, &ls; prompts you with a list of
+      environments you might want to insert. You can either choose one
+      from the list or type in a new environment name.  If you press
+      <literal>&lt;F5&gt;</literal> on a line which already has a word,
+      then that word is used instead of prompting.
+     </para>
+     <para>
+      See <link linkend="Tex_Env_name">Tex_Env_name</link> for a
+      description of how &ls; uses the word to form the expansion and how
+      to modify &ls;'s behavior.
+     </para>
+     <para>
+      The list of environments which &ls; prompts you with (when
+      <literal>&lt;F5&gt;</literal> is pressed on an empty line) is formed
+      from the <link
+       linkend="Tex_PromptedEnvironments">Tex_PromptedEnvironments</link>
+      setting.
+     </para>
+     <para>
+      In addition to this setting, &ls; also lists environments found in
+      custom packages as described in the section <link
+       linkend="package-actions">Package actions.</link>
+     </para>
+    </section>
+    <section id="inserting-env-shift-f1">
+     <title>Method 2: Using <literal>&lt;S-F1&gt;</literal>-<literal>&lt;S-F4&gt;</literal></title>
+     <para>
+      The shifted function keys, <literal>&lt;S-F1&gt;</literal> to
+      <literal>&lt;S-F4&gt;</literal> can be mapped to insert very commonly
+      used environments. The environments mapped to each key can be
+      customized via the <link
+       linkend="Tex_HotKeyMappings">g:Tex_HotKeyMappings</link> setting.
+     </para>
+    </section>
+    <section id="inserting-env-threeletter">
+     <title>Method 3: Using three letter sequences</title>
+     <para>
+      Environments can also be inserted by pressing a 3 capital letter
+      sequence starting with an <literal>E</literal>. The sequence of 3
+      letters generally tries to follow the following rules:
+     </para>
+     <orderedlist>
+      <listitem>
+       All environment mappings begin with <literal>E</literal>
+      </listitem>
+      <listitem>
+       If the environment can be broken up into 2 distinct words,
+       such as flushright (flush + right), then the next 2 letters
+       are the first letters of the 2 words.  Example:
+       <programlisting>flushleft  (_f_lush + _l_eft)  ---&gt; EFL
+flushright (_f_lush + _r_ight) ---&gt; EFR
+eqnarray   (_e_qn + _a_rray)   ---&gt; EEA</programlisting>
+       If on the other hand, the environment name cannot be broken
+       up into 2 distinct words, then the next 2 letters are the
+       first 2 letters of the name of the environment.
+       Example:
+       <programlisting>equation (_eq_uation)          ---&gt; EEQ</programlisting>
+      </listitem>
+     </orderedlist>
+     <para>
+      Unfortunately there are some environments that cannot be
+      split in two words and first two letters in name are
+      identical. In this case shortcut is created from E, first and
+      last letter.  Example:
+      <programlisting>quote     (_q_uot_e_)          ---&gt; EQE
+quotation (_q_uotatio_n_)      ---&gt; EQN</programlisting>
+      Of course, not every last one of the environments can follow
+      this rule because of ambiguities. In case of doubt, pull down
+      the Tex-Environments menu. The menu item should give the hint
+      for the map.
+     </para>
+    </section>
+   </section>
+   <section id="enclosing-environments">
+    <title>Enclosing in Environments</title>
+    <para>
+     &ls; provides visual-mode mappings which enclose visually
+     selected portions of text in environments. There are two ways provided
+     to do this.
+    </para>
+    <section id="enclosing-env-f5">
+     <title>Method 1: Pressing <literal>&lt;F5&gt;</literal></title>
+     <para>
+      You can also select a portion of text visually and press
+      <literal>&lt;F5&gt;</literal> while still in visual mode. This will
+      prompt you with a list of environments. (This list can be customized
+      via the <link
+       linkend="Tex_PromptedEnvironments">g:Tex_PromptedEnvironments</link>
+      setting). You can either choose from this list or type in a new
+      environment name. Once the selection is done, &ls; encloses the
+      visually selected portion in the chosen environment.
+     </para>
+    </section>
+    <section id="enclosing-env-threeletter">
+     <title>Method 2: Using three letter mappings</title>
+     <para>
+      You can also select text visually and press a sequence of three
+      characters beginning with <literal>,</literal> (the single comma
+      character) and the selected text will be enclosed in the chosen
+      environment. The three letter sequence follows directly from the
+      three letter sequence used to insert environments as described <link
+       linkend="inserting-env-threeletter">here</link>. The following
+      example describes the rule used:
+     </para>
+     <para>
+      If <literal>ECE</literal> inserts a
+      <literal>\begin{center}...\end{center}</literal> environment, then to
+      enclose a block of selected text in
+      <literal>\begin{center}...\end{center}</literal>, simply select the
+      text and press <literal>,ce</literal>.  The rule simply says that the
+      leading <literal>E</literal> is converted to <literal>,</literal> and
+      the next 2 letters are small case.  
+     </para>
+    </section>
+    <para>
+     Some of the visual mode mappings are sensitive to whether you
+     choose line-wise or character-wise. For example, if you choose a
+     word and press <literal>,ce</literal>, then you get
+     <literal>\centerline{word}</literal>, whereas if you press
+     <literal>,ce</literal> on a line-wise selection, you get:
+     <programlisting>\begin{center}
+    line
+\end{center}</programlisting>
+    </para>
+   </section>
+   <section id="changing-environments">
+    <title>Changing Environments</title>
+    <para>
+     Pressing <literal>&lt;S-F5&gt;</literal> in normal mode detects which
+     environment the cursor is presently located in and prompts you to
+     replace it with a new one. The innermost environment is detected. For
+     example, in the following source:
+     <programlisting>\begin{eqnarray}
+  \begin{array}{ccc}
+    2 &amp; 3 &amp; 4
+  \end{array}
+\end{eqnarray}</programlisting>
+     if you are located in the middle "2 &amp; 3 &amp; 4" line, then pressing
+     <literal>&lt;S-F5&gt;</literal> will prompt you to change the array
+     environment, not the eqnarray environment. In addition, &ls; will also
+     try to change lines within the environment to be consistent with the
+     new environment. For example, if the original environment was an
+     <literal>eqnarray</literal> environment with a
+     <literal>\label</literal> command, then changing it to an
+     <literal>eqnarray*</literal> environment will delete the
+     <literal>\label</literal>.
+    </para>
+    <para>
+     Pressing <literal>&lt;F5&gt;</literal> in normal mode has the same
+     effect as pressing <literal>&lt;F5&gt;</literal> in insert-mode,
+     namely you will be prompted to choose an environment to insert.
+    </para>
+   </section>
+  </section>
+  <section id="latex-command-maps">
+   <title>Command Mappings</title>
+   &ls; provides a rich set of mappings to insert, enclose and modify
+   &latex; commands.
+   <section id="inserting-commands">
+    <title>Inserting &latex; commands</title>
+    <anchor id="ls-imap-f7" />
+    <anchor id="ls-imap-s-f7" />
+    <para>
+     Pressing <literal>&lt;F7&gt;</literal> in insert or normal mode while
+     the cursor is touching a word will insert a command formed from the
+     word touching the cursor. 
+    </para>
+    <para>
+     For certain common commands, &ls; will expand them to include
+     additional arguments as needed. For example, <literal>frac</literal>
+     becomes <literal>\frac{&ph;}{&ph;}&ph;</literal>. Otherwise, it will
+     simply change the word under the cursor as follows 
+     <programlisting>word --> \word{&ph;}&ph;</programlisting> 
+     You can define custom expansions
+     of commands using the <literal>Tex_Com_{name}</literal> setting as
+     described in <link linkend="Tex_Com_name">here</link>.
+    </para>
+    <para>
+     If <literal>&lt;F7&gt;</literal> is pressed when the cursor is on
+     white-space, then &ls; will prompt you to choose a command and insert
+     that instead.The list of commands is constructed from the <link
+      linkend="Tex_PromptedCommands"><literal>g:Tex_PromptedCommands</literal></link>
+     setting and also from commands which &ls; finds while scanning custom
+     packages which &ls; finds. See the <link
+      linkend="package-actions">Package actions</link> section for details
+     on which files are scanned etc.
+    </para>
+   </section>
+   <section id="enclosing-commands">
+    <title>Enclosing in a command</title>
+    <para>
+     You can select a portion of text visually and press
+     <literal>&lt;F7&gt;</literal> while still in visual mode. This will
+     prompt you with a list of commands. (This list can be customized
+     via the <link
+      linkend="Tex_PromptedCommands">g:Tex_PromptedCommands</link>
+     setting). You can either choose from this list or type in a new
+     command name. Once the selection is done, &ls; encloses the
+     visually selected portion in the chosen command.
+    </para>
+   </section>
+   <section id="changing-commands">
+    <title>Changing commands</title>
+    <anchor id="ls-vmap-f7" />
+    <para>
+     In both insert and normal mode <literal>&lt;S-F7&gt;</literal> will
+     find out if you are presently within an environment and then prompt you
+     with a list of commands to change it to.
+    </para>
+   </section>
+  </section>
+  <section id="font-maps">
+   <title>Font Mappings</title> 
+   <para>
+    These mappings insert font descriptions such as:
+    <literal>\textsf{&ph;}&ph;</literal>
+    with the cursor left in place of the first <link
+     linkend="place-holders">placeholder</link> (the &ph; characters).
+   </para>
+   <para>
+    Mnemonic:
+    <orderedlist>
+     <listitem>first letter is always F (F for font)</listitem>
+     <listitem>next 2 letters are the 2 letters describing the font.</listitem>
+    </orderedlist>
+   </para>
+   <para>
+    Example: Typing <literal>FEM</literal> in insert-mode expands to
+    <literal>\emph{&ph;}&ph;</literal>.
+   </para>
+   <para>
+    Just like environment mappings, you can visually select an area and press
+    <literal>`sf</literal> to have it enclosed in:
+    <literal>\textsf{word}</literal>
+    or
+    <programlisting>{\sffamily
+line
+}</programlisting>
+    depending on character-wise or line-wise selection.
+   </para>
+  </section>
+  <section id="section-mappings">
+   <title>Section Mappings</title> 
+   <para>
+    These maps insert &latex; sections such as:
+    <programlisting>\section{&ph;}&ph;</programlisting>
+    etc. Just as in the case of environments and fonts, can be enclosed with a
+    visual selection. The enclosing is not sensitive to character or line-wise
+    selection.
+   </para>
+   <para>
+    Mnemonic: (make your own!)
+    <programlisting>SPA for part
+SCH for chapter
+SSE for section
+SSS for subsection
+SS2 for subsubsection
+SPG for paragraph
+SSP for subparagraph</programlisting>
+   </para>
+   <para>
+    Example:
+    SSE in insert mode inserts
+    <programlisting>\section{&lt;++&gt;}&lt;++&gt;</programlisting>
+    If you select a word or line and press <literal>,se</literal>, then you
+    get
+    <programlisting>\section{section name}</programlisting>
+    The menu item in Tex-Environments.Sections have a sub-menu called
+    'Advanced'. Choosing an item from this sub-menu asks a couple of questions
+    (whether you want to include the section in the table of contents, whether
+    there is a shorter name for the table of contents) and then creates a more
+    intelligent template.
+   </para>
+  </section>
+  <section id="greek-letter-mappings">
+   <title>Greek Letter Mappings</title>
+   <para>
+    Lower case
+   </para>
+   <literal>`a</literal>   through <literal>`z</literal> expand to
+   <literal>\alpha</literal> through <literal>\zeta</literal>.
+   <para>
+    Upper case:
+   </para>
+   <programlisting>`D = \Delta
+`F = \Phi
+`G = \Gamma
+`Q = \Theta
+`L = \Lambda
+`X = \Xi
+`Y = \Psi
+`S = \Sigma
+`U = \Upsilon
+`W = \Omega</programlisting>
+   <note><para>LaTeX does not support upper case for all greek alphabets.</para></note>
+   <para>Just like other &ls; mappings, these mappings are not created using
+    the standard <literal>imap</literal> command. Thus you can type slowly,
+    correct using <literal>&lt;BS&gt;</literal> etc.</para>
+  </section>
+  <section id="auc-tex-mappings">
+   <title>Auc-Tex Key Bindings</title>
+   <para>
+    These are simple 2 key expansions for some very commonly used LaTeX
+    elements:
+   </para>
+   <programlisting>`^   Expands To   \Hat{&ph;}&ph;
+`_   expands to   \bar{&ph;}&ph;
+`6   expands to   \partial
+`8   expands to   \infty
+`/   expands to   \frac{&ph;}{&ph;}&ph;
+`%   expands to   \frac{&ph;}{&ph;}&ph;
+`@   expands to   \circ
+`0   expands to   ^\circ
+`=   expands to   \equiv
+`\   expands to   \setminus
+`.   expands to   \cdot
+`*   expands to   \times
+`&amp;   expands to   \wedge
+`-   expands to   \bigcap
+`+   expands to   \bigcup
+`(   expands to   \subset
+`)   expands to   \supset
+`&lt;   expands to   \le
+`&gt;   expands to   \ge
+`,   expands to   \nonumber
+`~   expands to   \tilde{&ph;}&ph;
+`;   expands to   \dot{&ph;}&ph;
+`:   expands to   \ddot{&ph;}&ph;
+`2   expands to   \sqrt{&ph;}&ph;
+`|   expands to   \Big|
+`I   expands to   \int_{&ph;}^{&ph;}&ph;</programlisting>
+   <para>
+    (again, notice the convenient place-holders)
+   </para>
+   <para>
+    In addition the visual mode macros are provided:
+   </para>
+   <programlisting>`(  encloses selection in \left( and \right)
+`[  encloses selection in \left[ and \right]
+`{  encloses selection in \left\{ and \right\}
+`$  encloses selection in $$ or \[ \] depending on characterwise or
+                                      linewise selection</programlisting>
+  </section>
+  <section id="diacritic-mappings">
+   <title>Diacritics</title>
+   <para>
+    These mappings speed up typing European languages which contain diacritic
+    characters such as a-umlaut etc. 
+    <programlisting>+&lt;l&gt;     expands to \v{&lt;l&gt;}
+=&lt;l&gt;     expands to \'{&lt;l&gt;}</programlisting>
+    where <literal>&lt;l&gt;</literal> is an alphabet.
+   </para>
+   <programlisting>+}       expands to \"{a}
++:       expands to \^{o}</programlisting>
+   <para>
+    &ls; also ships with <link linkend="smart-backspace">smart
+     backspacing</link> functionality which provides another convenience while
+    editing languages with diacritics.
+   </para>
+   <note>
+    <para>Diacritics are disabled by default in &ls; because they can
+     sometimes be a little too intrusive. Moreover, most European users can
+     nowadays use font encodings which display diacritic characters directly
+     instead of having to rely on &ls;'s method of displaying diacritics.</para>
+    <para>Set the <link linkend="Tex_Diacritics">g:Tex_Diacritics</link>
+     variable to enable diacritics.</para>
+   </note>
+  </section>
+  <section id="bibtex-bindings">
+   <title>BibTeX Shortcuts</title>
+   <para>
+    &ls; provides an easy way of entering bibliographic entries. Four
+    insert-mode mappings: <literal>BBB</literal>, <literal>BBL</literal>,
+    <literal>BBH</literal> and <literal>BBX</literal> are provided, all of
+    which essentially act in the same manner. When you type any of these in
+    insert-mode, you will get a prompt asking you to choose a entry type
+    for the bibliographic entry.
+   </para>
+   <para>
+    When you choose an entry type, a bibliographic entry template will be
+    inserted. For example, if you choose the option
+    <literal>'book'</literal> via the map <literal>BBB</literal>, then
+    the following template will be inserted:
+    <programlisting>@BOOK{&lt;+key+&gt;,
+    author = {&ph;},
+    editor = {&ph;},
+    title = {&ph;},
+    publisher = {&ph;},
+    year = {&ph;},
+    otherinfo = {&ph;}
+}&ph;</programlisting>
+   </para>
+   <para>
+    <literal>&lt;+key+&gt;</literal> will be highlighted in select-mode and
+    you can type in the bib-key. After that you can use
+    <literal>&lt;Ctrl-J&gt;</literal> to navigate to successive locations
+    in the template and enter new values.
+   </para>
+   <para>
+    <literal>BBB</literal> inserts a template with only the fields
+    mandatorily required for a given entry type. <literal>BBL</literal>
+    inserts a template with commonly used extra options.
+    <literal>BBH</literal> inserts a template with more options which are
+    not as commonly used. <literal>BBX</literal> inserts a template with
+    all the fields which the entry type supports.
+   </para>
+   <note>
+    <title>Mnemonic</title>
+    <para>
+     <literal>B</literal> for Bibliographic entry, <literal>L</literal>
+     for Large entry, <literal>H</literal> for Huge entry, and
+     <literal>X</literal> stands for all eXtras.
+    </para>
+   </note>
+   <section id="adding-bib-options">
+    <title>Customizing Bib-TeX fields</title>
+    <para>
+     If you wish the <literal>BBB</literal> command to insert a few
+     additional fields in addition to the fields it creates, then you will
+     need to define global variables of the form
+     <programlisting>g:Bib_{type}_options</programlisting>
+     in you <literal>$VIM/ftplugin/bib.vim</literal> file, where
+     <literal>{type}</literal> is a string like
+     <literal>'article'</literal>, <literal>'book'</literal> etc. This
+     variable should contain one of the letters defined in the following
+     table
+    </para>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <thead>
+       <row>
+        <entry>Character</entry>
+        <entry>Field Type</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row><entry>w</entry><entry>address</entry></row>
+       <row><entry>a</entry><entry>author</entry></row>
+       <row><entry>b</entry><entry>booktitle</entry></row>
+       <row><entry>c</entry><entry>chapter</entry></row>
+       <row><entry>d</entry><entry>edition</entry></row>
+       <row><entry>e</entry><entry>editor</entry></row>
+       <row><entry>h</entry><entry>howpublished</entry></row>
+       <row><entry>i</entry><entry>institution</entry></row>
+       <row><entry>k</entry><entry>isbn</entry></row>
+       <row><entry>j</entry><entry>journal</entry></row>
+       <row><entry>m</entry><entry>month</entry></row>
+       <row><entry>z</entry><entry>note</entry></row>
+       <row><entry>n</entry><entry>number</entry></row>
+       <row><entry>o</entry><entry>organization</entry></row>
+       <row><entry>p</entry><entry>pages</entry></row>
+       <row><entry>q</entry><entry>publisher</entry></row>
+       <row><entry>r</entry><entry>school</entry></row>
+       <row><entry>s</entry><entry>series</entry></row>
+       <row><entry>t</entry><entry>title</entry></row>
+       <row><entry>u</entry><entry>type</entry></row>
+       <row><entry>v</entry><entry>volume</entry></row>
+       <row><entry>y</entry><entry>year</entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     For example, by default, choosing <literal>'article'</literal> via
+     <literal>BBB</literal> inserts the following template by default
+     <programlisting>@ARTICLE{&lt;+key+&gt;,
+    author = {&ph;},
+    title = {&ph;},
+    journal = {&ph;},
+    year = {&ph;},
+    otherinfo = {&ph;}
+}&ph;</programlisting>
+     However, if <literal>g:Bib_article_options</literal> is defined as
+     <literal>'mnp'</literal>, then <literal>'article'</literal> will
+     insert the following template
+     <programlisting>@ARTICLE{&lt;+key+&gt;,
+    author = {&ph;},
+    title = {&ph;},
+    journal = {&ph;},
+    year = {&ph;},
+    month = {&ph;},
+    number = {&ph;},
+    pages = {&ph;},
+    otherinfo = {&ph;}
+}&ph;</programlisting>
+    </para>
+    <para>
+     If you have some other fields you wish to associate with an article
+     which are not listed above, then you will have to use the
+     <literal>Bib_{type}_extrafields</literal> option. This is a newline
+     separated string of complete field names which will be included in the
+     template. For example, if you define
+     <programlisting>let g:Bib_article_extrafields = "crossref\nabstract"</programlisting>
+     then the article template will include the lines
+     <programlisting>crossref = {&ph;},
+abstract = {&ph;},</programlisting>
+    </para>
+    <note>
+     <para>
+      You will need to define <literal>Bib_*</literal> settings in your
+      <literal>$VIMRUNTIME/ftplugin/bib.vim</literal> file.
+     </para>
+    </note>
+   </section>
+  </section>
+  <section id="smart-keys">
+   <title>Smart Key Mappings</title>
+   <para>
+    &ls; ships with the following smart keys:
+   </para>
+   <formalpara>
+    <anchor id="smart-backspace" />
+    <title>Smart Backspace</title>
+    Pressing <literal>&lt;BS&gt;</literal> in insert mode checks to see
+    whether we are just after something like <literal>\'{a}</literal> and
+    if so, deletes all of it. i.e, diacritics are treated as single
+    characters for backspacing.
+   </formalpara>
+   <formalpara>
+    <title>Smart Quotes</title>
+    Pressing <literal>"</literal> (English double quote) will insert
+    <literal>``</literal> or <literal>''</literal> by making an
+    intelligent guess about whether we intended to open or close a quote.
+   </formalpara>
+   <formalpara>
+    <title>Smart Space</title>
+    &ls; maps the <literal>&lt;space&gt;</literal> key in such a
+    way that $ characters are not broken across lines. It does this by
+    first setting <literal>tw=0</literal> so that Vim will not
+    automatically break lines and then maps the
+    <literal>&lt;space&gt;</literal> key to insert newlines keeping
+    <literal>$$</literal>'s on the same line.
+   </formalpara>
+   <formalpara>
+    <title>Smart Dots</title>
+    Pressing <literal>...</literal> (3 dots) results in
+    <literal>\ldots</literal> outside math mode and
+    <literal>\cdots</literal> in math mode.
+   </formalpara>
+  </section>
+  <section id="altkey-mappings">
+   <title>Alt Key Macros</title>
+   <para>
+    &ls; utilizes a set of macros originally created by Carl Mueller in
+    auctex.vim to make inserting all the <literal>\left ... \right</literal>
+    stuff very easy and to also make some use of the heavily under-utilized
+    <literal>&lt;Alt&gt;</literal> key. 
+   </para>
+   <note>
+    <para>
+     By default, typing <literal>Alt-&lt;key&gt;</literal> in &vim; takes
+     focus to the menu bar if a menu with the hotkey
+     <literal>&lt;key&gt;</literal> exists. If in your case, there are
+     conflicts due to this behavior, you will need to set
+     <programlisting>set winaltkeys=no</programlisting>
+     in your <literal>$VIM/ftplugin/tex.vim</literal> in order to use these
+     maps.
+    </para>
+   </note>
+   <note>
+    <title>Customizing the maps</title>
+    <para>
+     If for some reason, you wish to not map the
+     <literal>&lt;Alt&gt;</literal> keys, (some European users need to use
+     the <literal>&lt;Alt&gt;</literal> key to enter diacritics), you can
+     change these maps to other keys as described in the section <link
+      linkend="customize-alt-key-maps">Customizing Alt-key maps</link>.
+    </para>
+   </note>
+   <section id="Alt-L">
+    <title><literal>&lt;Alt-L&gt;</literal></title>
+    <para>
+     This is a polymorphic insert-mode mapping which expands to one of the
+     following depending on the character just before the cursor location.
+    </para>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <colspec colwidth="0.5in" align="cener" />
+      <colspec colwidth="0.5in" />
+      <thead>
+       <row>
+        <entry>Character before cursor</entry>
+        <entry>Expansion</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row><entry>(</entry> <entry><literal>\left( &ph; \right)</literal></entry></row>
+       <row><entry>[</entry> <entry><literal>\left[ &ph; \right]</literal></entry></row>
+       <row><entry>|</entry> <entry><literal>\left| &ph; \right|</literal></entry></row>
+       <row><entry>{</entry> <entry><literal>\left\{ &ph; \right\}</literal></entry></row>
+       <row><entry>&lt;</entry> <entry><literal>\langle &ph; \rangle</literal></entry></row>
+       <row><entry>q</entry> <entry><literal>\lefteqn{&ph;}&ph;</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     If the character before the cursor is none of the above, then it will
+     simply insert a <literal>\label{&ph;}&ph;</literal>.
+    </para>
+   </section>
+   <section id="Alt-B">
+    <title><literal>&lt;Alt-B&gt;</literal></title> 
+    <para>
+     This insert-mode mapping encloses the previous character in
+     <literal>\mathbf{}</literal>.
+    </para>
+   </section>
+   <section id="Alt-C">
+    <title><literal>&lt;Alt-C&gt;</literal></title>
+    <para>
+     In insert mode, this key is polymorphic as follows:
+    </para>
+    <orderedlist>
+     <listitem>
+      If the previous character is a letter or number, then capitalize it and
+      enclose it in <literal>\mathcal{}</literal>.
+     </listitem>
+     <listitem>
+      otherwise insert <literal>\cite{}</literal>.
+     </listitem>
+    </orderedlist>
+    <para>
+     In visual mode, it will simply enclose the selection in
+     <literal>\mathcal{}</literal>
+    </para>
+   </section>
+   <section id="Alt-I">
+    <title><literal>&lt;Alt-I&gt;</literal></title>
+    <para>
+     This mapping inserts an <literal>\item</literal> command at the
+     current cursor location depending on which environment the cursor is
+     enclosed in. The style of the <literal>\item</literal> command is
+     dependent on the enclosing environment. By default,
+     <literal>&lt;Alt-I&gt;</literal> has styles defined forthe following
+     environments:
+    </para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <thead>
+        <row>
+         <entry>Environment</entry>
+         <entry>Style</entry>
+        </row>
+       </thead>
+       <tbody>
+        <row><entry>itemize</entry><entry>\item </entry></row>
+        <row><entry>enumerate</entry><entry>\item </entry></row>
+        <row><entry>theindex</entry><entry>\item </entry></row>
+        <row><entry>thebibliography</entry><entry>\item[&lt;+biblabel+&gt;]{&lt;+bibkey+&gt;} &lt;++&gt;</entry></row>
+        <row><entry>description</entry><entry>\item[&lt;+label+&gt;] &lt;++&gt;</entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+     <para>
+     <literal>&lt;Alt-I&gt;</literal> is intelligent enough to
+     account for nested environments. For example,
+     <programlisting>\begin{itemize}
+    \item first item
+    \item second item
+          \begin{description}
+              \item[label1] first desc
+              \item[label2] second
+              % &lt;Alt-I&gt; will insert "\item[&lt;+label+&gt;] &lt;++&gt;" if
+              % used here
+          \end{description}
+    \item third item
+    % &lt;Alt-I&gt; will insert "\item " when if used here.
+\end{itemize}
+% &lt;Alt-I&gt; will insert nothing ("") if used here</programlisting>
+     </para>
+    <para>
+     The style used by <literal>&lt;Alt-I&gt;</literal> can be customized
+     using the <link
+      linkend="Tex_ItemStyle_environment"><literal>g:Tex_ItemStyle_environment</literal></link>
+     variable.
+    </para>
+   </section>
+  </section>
+  <section id="custom-macros-menu">
+   <title>Custom Macros</title>
+   <para>
+    This functionality available via the TeX-Suite.Macros menu, provides
+    a way of inserting customized macros into the current file via the
+    menu.
+   </para>
+   <para>
+    When &ls; starts up, it scans the
+    <literal>$VIM/ftplugin/latex-suite/macros/</literal> directory and
+    creates a menu from the files found there. Each file is considered as
+    a single macro. You can place your own macros in this directory,
+    using <link linkend="place-holders">placeholders</link> if wanted.
+   </para>
+   <para>
+    When you choose a macro from the menu, the corresponding file is read
+    into the current buffer after the current cursor position. In non-gui
+    mode, you can use the |TMacro| command instead of choosing from the
+    menu. This command takes the macro file name as an argument. When
+    called without arguments (preferred usage), then a list of available
+    macro files is displayed and the user is prompted to choose one of
+    them).
+   </para>
+   <para>
+    There are some other tools provided in this menu, namely:
+   </para>
+   <informaltable frame="none">
+    <tgroup cols="2">
+     <colspec colwidth="0.5in" />
+     <colspec colwidth="0.5in" />
+     <tbody>
+      <row><entry>{New}</entry>
+       <entry>
+        Creates a new (unnamed) buffer in the
+        latex-suite/macros/ directory.  Use the command
+        :TexMacroNew in non-gui mode.
+       </entry>
+      </row>
+      <row>
+       <entry>{Edit}</entry>
+       <entry>
+        Opens up the corresponding macro file for editing. Use
+        |:TexMacroEdit| in non-gui mode. When you try to edit {macro}
+        not from local directory &ls; will copy it to your local
+        directory with suffix "-local". If local copy already exists
+        &ls; prompt for overwriting it.
+       </entry>
+      </row>
+      <row>
+       <entry>{Delete}</entry>
+       <entry>
+        Deletes the corresponding macro. Use the prefixed numbers for
+        fast navigation of menus. Use |:TexMacroDelete| in non-gui mode.
+        When you choose to delete {macro} which is not in your local
+        directory &ls; will refuse to delete it.
+       </entry>
+      </row>
+      <row>
+       <entry>{Redraw}</entry>
+       <entry>
+        Rescans the macros/ directories and refreshes the macros list.
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </informaltable> 
+  </section>
+  <section id="ls-new-macros">
+   <title>Making your own Macros via <literal>IMAP()</literal></title>
+   <para>
+    If you find the need to create your own macros, then you can use the
+    <literal>IMAP()</literal> function provided with &ls;. See <link
+     linkend="why-IMAP" endterm="why-IMAP.title"></link> for a short
+    explanation of why you might prefer <literal>IMAP()</literal> over
+    &vim;'s standard <literal>:imap</literal> command. An example best
+    explains the usage:
+    <programlisting>:call IMAP('NOM', '\nomenclature{&ph;}&ph;', 'tex')</programlisting>
+    This will create a &ls;-style mapping, where if you type
+    <literal>NOM</literal> in insert mode, you will get
+    <literal>\nomenclature{&ph;}&ph;</literal> with the cursor left in
+    place of the first <literal>&ph;</literal> characters. See <link
+     linkend="ls-imaps-syntax" endterm="ls-imaps-syntax.title"></link> for
+    a detailed explanation of the <literal>IMAP()</literal> command.
+   </para>
+   <para>
+    For maps which are triggered for a given filetype, the
+    <literal>IMAP()</literal> command above should be put in the filetype
+    plugin script for that file. For example, for tex-specific mappings,
+    the <literal>IMAP()</literal> calls should go in
+    <literal>$VIM/ftplugin/tex.vim</literal>. For globally visible maps,
+    you will need to use the following in either your
+    <literal>~/.vimrc</literal> or a file in your
+    <literal>$VIM/plugin</literal> directory.
+    <programlisting>augroup MyIMAPs
+    au!
+    au VimEnter * call IMAP('Foo', 'foo', '')
+augroup END</programlisting>
+   </para>
+   <section id="why-IMAP">
+    <title id="why-IMAP.title">Why use <literal>IMAP()</literal></title>
+    <para>
+     Using <literal>IMAP</literal> instead of &vim;'s built-in
+     <literal>:imap</literal> command has a couple of advantages:
+     <orderedlist>
+      <listitem>
+       The 'ttimeout' option will generally limit how easily you can type
+       the left hand side for a normal <literal>:imap</literal>. if you type
+       the left hand side too slowly, then the mapping will not be
+       activated.
+      </listitem>
+      <listitem>
+       If you mistype one of the letters of the lhs, then the mapping is
+       deactivated as soon as you backspace to correct the mistake.
+      </listitem>
+      <listitem>
+       The characters in lhs are shown on top of each other. This is fairly
+       distracting. This becomes a real annoyance when a lot of characters
+       initiate mappings.
+      </listitem>
+     </orderedlist>
+    </para>
+   </section>
+   <section id="ls-imaps-syntax">
+    <title id="ls-imaps-syntax.title">IMAP() syntax</title>
+    <para>
+     Formally, the syntax which is used for the <literal>IMAP</literal>
+     function is:
+     <programlisting>call IMAP (lhs, rhs, ft [, phs, phe])</programlisting>
+    </para>
+    <para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <thead>
+        <row>
+         <entry>Argument</entry>
+         <entry>Explanation</entry>
+        </row>
+       </thead>
+       <tbody>
+        <row>
+         <entry>lhs</entry>
+         <entry>
+          <para>
+           This is the "left-hand-side" of the mapping. When you use
+           <literal>IMAP</literal>, only the last character of this word is
+           actually mapped, although the effect is that the whole word is
+           mapped.
+          </para>
+          <para>
+           If you have two mappings which end in a common
+           <literal>lhs</literal>, then the mapping with the longer
+           <literal>lhs</literal> is used. For example, if you do
+           <programlisting>call IMAP('BarFoo', 'something', 'tex')
+call IMAP('Foo', 'something else', 'tex')</programlisting>
+            Then typing <literal>BarFoo</literal> inserts
+            <literal>"something"</literal>, whereas <literal>Foo</literal> by
+            itself inserts <literal>"something else"</literal>.
+          </para>
+          <para>
+           Also, the nature of <literal>IMAP()</literal> makes creating
+           certain combination of mappings impossible. For example if you
+           have
+           <programlisting>call IMAP('foo', 'something', 'tex')
+call IMAP('foobar', 'something else', 'tex')</programlisting>
+           Then you will never be able to trigger <literal>"foobar"</literal>
+           because typing <literal>"foo"</literal> will immediately insert
+           <literal>"something"</literal>. This is the "cost" which you incur
+           over the normal <literal>:imap</literal> command for the
+           convenience of no 'timeout' problems, the ability to correct
+           <literal>lhs</literal> etc.
+          </para>
+         </entry>
+        </row>
+        <row>
+         <entry>rhs</entry>
+         <entry>
+          <para>
+           The "right-hand-side" of the mapping. This is the expansion you
+           will get when you type <literal>lhs</literal>.
+          </para>
+          <para>
+           This string can also contain special characters such as
+           <literal>&lt;enter&gt;</literal> etc. To do this, you will need
+           to specify the second argument in double-quotes as follows:
+           <programlisting>:call IMAP('EFE', "\\begin{figure}\&lt;CR&gt;&ph;\\end{figure}&ph;", 'tex')</programlisting>
+           With this, typing <literal>EFE</literal> is equivalent to typing
+           in the right-hand side with all the special characters in
+           insert-mode. This has the advantage that if you have filetype
+           indentation set up, then the right hand side will also be
+           indented just as if you had typed it in normally.
+          </para>
+          <anchor id="IMAP_PutTextWithMovement" />
+          <para>
+           You can also set up a &ls; style mapping which calls a custom function
+           as follows:
+           <programlisting>:call IMAP('FOO', "\&lt;C-r&gt;=MyFoonction()\&lt;CR&gt;", 'tex')</programlisting>
+           where <literal>MyFoonction</literal> is a custom function you have
+           written. If <literal>MyFoonction</literal> also has to return a string
+           containing <literal>&ph;</literal> characters, then you will need to
+           use the function <literal>IMAP_PutTextWithMovement()</literal>. An
+           example best explains the usage:
+          </para>
+          <programlisting>call IMAP('FOO', "\&lt;C-r&gt;=AskVimFunc()\&lt;CR&gt;", 'vim')
+" Askvimfunc: Asks For Function Name And Sets Up Template 
+" Description: 
+function! AskVimFunc()
+    let name = input('Name of the function : ')
+    if name == ''
+        let name = "&lt;+Function Name+&gt;"
+    end
+    let islocal = input('Is this function scriptlocal ? [y]/n : ', 'y')
+    if islocal == 'y'
+        let sidstr = '&lt;SID&gt;'
+    else
+        let sidstr = ''
+    endif
+    return IMAP_PutTextWithMovement( 
+        \ "\" ".name.": &lt;+short description+&gt; \&lt;cr&gt;" .
+        \ "Description: &lt;+long description+&gt;\&lt;cr&gt;" . 
+        \ "\&lt;C-u&gt;function! ".name."(&lt;+arguments+&gt;)&ph;\&lt;cr&gt;" . 
+        \       "&lt;+function body+&gt;\&lt;cr&gt;" . 
+        \ "endfunction \" "
+        \ )
+endfunction</programlisting>
+          <para>
+          </para>
+         </entry>
+        </row>
+        <row>
+         <entry>ft</entry>
+         <entry>
+          <para>
+           The file type for which this mapping is active. When this string
+           is left empty, the mapping applies for all file-types. A filetype
+           specific mapping will always take precedence.
+          </para>
+         </entry>
+        </row>
+        <row>
+         <entry>phs, phe</entry>
+         <entry>
+          <para>
+           If you prefer to write the <literal>rhs</literal> with characters
+           other than <literal>&lt;+</literal> and <literal>+&gt;</literal>
+           to denote place-holders, you can use the last 2 arguments to
+           specify which characters in the <literal>rhs</literal> specify
+           place-holders. By default, these are <literal>&lt;+</literal> and
+           <literal>+&gt;</literal> respectively.
+          </para>
+          <para>
+           Note that the <literal>phs</literal> and <literal>phe</literal>
+           arguments do not control what characters will be displayed for
+           the placeholders when the mapping is actually triggered. What
+           characters are used to display place-holders when you trigger an
+           <literal>IMAP</literal> are controlled by the <link
+            linkend="Imap_PlaceHolderStart"><literal>Imap_PlaceHolderStart</literal></link>
+           and <link
+            linkend="Imap_PlaceHolderEnd"><literal>Imap_PlaceHolderEnd</literal></link>
+           settings.
+          </para>
+         </entry>
+        </row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+    </para>
+   </section>
+  </section>
+ </section>
+ <section id="latex-packages">
+  <title>Package Handling</title>
+  <para>
+   &ls; has a lot of functionality written to ease working with packages.
+   Packages here refers to files which you include into the &latex;
+   document using the <literal>\usepackage</literal> command.
+  </para>
+  <section id="inserting-packages">
+   <title>Inserting package commands</title>
+   <para>
+    When you first invoke &ls;, it scans the
+    <literal>$VIM/ftplugin/latex-suite/packages</literal> directory for
+    package script files and creates a menu from all the files found there.
+    This menu is created under <literal>TeX-Suite > Packages >
+     Supported</literal>. This menu contains a list of packages "supported"
+    by &ls;. When you choose one of the packages from this menu (for example
+    the <literal>amsmath</literal> package), then a line of
+    the form
+    <programlisting>\usepackage[&ph;]{amsmath}&ph;</programlisting>
+    will be inserted into the current file.
+   </para>
+   <para>
+    The <literal>\usepackage</literal> line can also be inserted in an easy
+    manner in the current file by pressing <literal>&lt;F5&gt;</literal>
+    while in the preamble of the current document. This will set up a prompt
+    from the supported packages and ask you to choose from one of them. If
+    you do not find the package you want to insert in the list, you can type
+    in a package-name and it will use that. Pressing
+    <literal>&lt;F5&gt;</literal> in the preamble on a line containing a
+    single word will construct a <literal>\usepackage</literal> line from
+    that word.
+   </para>
+   <para>
+    You can also use the <link
+     linkend="TPackage"><literal>TPackage</literal></link> to insert the
+    <literal>\usepackage</literal> line.
+   </para>
+   <para>
+    Once you have inserted a <literal>\usepackage</literal> line, for
+    supported packages, you can use the Options and Commands menus
+    described in the <link linkend="package-actions">next section</link>.
+   </para>
+  </section>
+  <section id="package-actions">
+   <title>Actions taken for supported packages</title>
+   <para>
+    &ls; takes the following actions for packages detected when a file is
+    loaded, or a new <literal>\usepackage</literal> line is inserted using
+    one of the methods described in the <link
+     linkend="inserting-packages">previous section</link>.
+   </para>
+   <para>
+    If you are using the GUI and you have <link
+     linkend="Tex_Menus">g:Tex_Menus</link> set to 1, &ls; will create the
+    following sub-menus
+   <simplelist>
+    <member><literal>TeX-Suite > Packages > &lt;package&gt; Options</literal></member>
+    <member><literal>TeX-Suite > Packages > &lt;package&gt; Commands</literal></member>
+   </simplelist>
+   </para>
+   <para>
+    where <literal>&lt;package&gt;</literal> is the package you just
+    inserted (or was detected). You can use these menus to insert commands,
+    environments and options which &ls; recognizes as belonging to this
+    package.
+   </para>
+   <note>
+    <para>
+     While inserting an option, you need to position yourself in the
+     appropriate place in the document, most commonly inside the square
+     braces in the <literal>\usepackage[]{packname}</literal> command. &ls;
+     will not navigate to that location.
+    </para>
+   </note>
+   <para>
+    In addition to creating these sub-menus, &ls; will also scan the
+    <literal>$VIM/ftplugin/latex-suite/dictionaries</literal> directory and
+    if a dictionary file corresponding to the package file is found, then
+    it will add the file to the <literal>'dict'</literal> setting in &vim;
+    so you can use the <literal>&lt;C-X&gt;&lt;C-K&gt;</literal> command to
+    complete words from that file.
+   </para>
+   <para>
+    For example, the <literal>SIUnits</literal> package has a custom
+    dictionary.
+   </para>
+   <anchor id="latex-package-scanning" />
+   <para>
+    If a package detected at startup is found by &ls; in the current
+    directory or in a location specified by the <link
+     linkend="Tex_TEXINPUTS">g:Tex_TEXINPUTS</link> variable, &ls; will
+    scan the package for <literal>\newenvironment</literal> and
+    <literal>newcommand</literal> lines and also append any commands and
+    environments found to the list of commands and environments which you
+    are prompted with when you press <link
+     linkend="inserting-env-f5"><literal>&lt;F5&gt;</literal></link> or <link
+     linkend="ls-imap-f7"><literal>&lt;F7&gt;</literal></link> in insert
+    mode.
+   </para>
+  </section>
+  <para>
+   In addition, the <literal>TeX-Suite > Packages</literal> menu also
+   contains the following submenus
+  </para>
+  <formalpara>
+   <title>Update</title>
+   This command is to be invoked with the cursor placed on the package
+   name. If the corresponding package is found, then a sub-menu with the
+   supported commands and options is created.
+  </formalpara>
+  <formalpara>
+   <title>Update All</title>
+   This function reads the preamble of the document for
+   <literal>\usepackage</literal> lines and if &ls; supports the detected
+   packages, then sub-menus containing the package options and commands
+   are created.
+  </formalpara>
+  <section id="automatic-package-detection">
+   <title>Automatic Package detection</title>
+   <para>
+    Whenever &ls; begins editing a new &latex; file, it scans it for
+    <literal>\usepackage{name}</literal> lines, and if a supported package
+    is found, then it will create sub-menus and add to the
+    <literal>'dict'</literal> setting as described above.
+   </para>
+   <para>
+    If a <link linkend="latex-master-file">master-file</link> has been specified,
+    then it will scan that file instead of the current file. See the section
+    <link linkend="custom-packages">Custom Packages</link>
+    to see which files &ls; will scan in more detail.
+   </para>
+   <para>
+    For all the packages detected in this manner, &ls; will take certain
+    actions as described in the section <link
+     linkend="package-actions">package support.</link>.
+   </para>
+   <section id="custom-packages">
+    <title>Custom Packages</title>
+    <para>
+     Often times, the preamble can become too long, and some people prefer
+     to put most of their personalization in a custom package and include
+     that using a <literal>\usepackage</literal> line. &ls; tries to search
+     such customs package for other <literal>\usepackage</literal> lines, so
+     that supported packages included in this indirect manner can also be
+     used to create sub-menus, extend the <literal>'dict'</literal> setting
+     etc. The most obvious place to place such custom packages is in the
+     same directory as the edited file. In addition, &latex; also supports
+     placing custom packages in places pointed to by the
+     <literal>$TEXINPUTS</literal> environment variable.
+    </para>
+    <para>
+     If you use the <literal>$TEXINPUTS</literal> variable in &latex;, and
+     you wish &ls; to search these custom packages for
+     <literal>\usepackage</literal> lines, then you need to initialize the
+     <link linkend="Tex_TEXINPUTS"><literal>g:Tex_TEXINPUTS</literal></link>
+     variable.
+    </para>
+    <para>
+     The <literal>g:Tex_TEXINPUTS</literal> variable needs to be set in the
+     same format which &vim; uses for the <literal>'path'</literal> setting.
+     This format is explained in detail if you do 
+     <programlisting>:help file-searching</programlisting>
+     from within &vim;.
+    </para>
+    <para>
+     Therefore the value of <literal>g:Tex_TEXINPUTS</literal> will most
+     probably be different from <literal>$TEXINPUTS</literal> which your
+     native &latex; distribution uses.
+    </para>
+    <para>
+     Example:
+     <programlisting>let g:Tex_TEXINPUTS = '~/texmf/mypackages/**,./**'</programlisting>
+     The <literal>**</literal> indicates that all directories below the
+     directory <literal>~/texmf/mypackages</literal> and
+     <literal>./</literal> are to be scanned for custom packages.
+    </para>
+    <note>
+     <para>
+      The present directory <literal>'.'</literal> is always searched. You
+      need not include that in <literal>g:Tex_TEXINPUTS</literal>.
+     </para>
+    </note>
+   </section>
+  </section>
+  <section id="supporting-packages">
+   <title>Writing supporting for a package</title>
+   <para>
+    Supporting a package is easy and consists of writing a vim script with
+    the same name as the package and placing it in the
+    <literal>$VIM/ftplugin/latex-suite/packages</literal> directory. A
+    package script should define two variables as described in the next two
+    sections. In addition to these two variables, you can also define any
+    functions, environment definitions etc. in this file.
+   </para>
+   <section>
+    <title><literal>g:Tex_package_option_&lt;package&gt;</literal></title>
+    <para>
+     This setting is a string containing a comma separated list of options
+     supported by this package.
+    </para>
+    <para>
+     Example:
+     <programlisting>g:Tex_package_option_mypack = 'opt1,opt2=,sbr:group1,opt3,opt4'</programlisting>
+     The <literal>=</literal> suffix means that the option takes a value.
+     Use <literal>sbr:group name</literal> to separate options into
+     sub-menus. All successive options will be clubbed into the
+     <literal>group1</literal> sub-menu till the next
+     <literal>sbr:</literal> option is encountered.
+    </para>
+   </section>
+   <section>
+    <title><literal>g:Tex_package_&lt;package&gt;</literal></title>
+    <programlisting>
+    g:TeX_package_&lt;package&gt; = "pre:Command,pre:Command1"
+More detailed example is in latex-suite/packages/exmpl file (slightly
+outdated).
+Here is short summary of prefixes which can be used in package files:
+(x - place with cursor, &ph; - |placeholder|)
+
+{env:command}  Environment: creates simple environment template
+            \begin{command}
+                x
+            \end{command}&ph;
+{eno:command}  Environment with option:
+            \begin[x]{command}
+                &ph;
+            \end{command}&ph;
+{ens:command[&lt;&lt;option&gt;&gt;]...}  Environment special:
+            \begin[&lt;&lt;option&gt;&gt;]...{command}
+                &ph;
+            \end{command}&ph;
+{bra:command} Brackets:
+            \command{x}&ph;
+{brd:command} Brackets double:
+            \command{x}{&ph;}&ph;
+{brs:command[&lt;&lt;option&gt;&gt;]...} Brackets special (as environment special:
+            \command[&lt;+x+&gt;]{&ph;}{&ph;}&ph;
+{nor:command} Normal:
+            \command&lt;Space
+{noo:command} Normal with option:
+            \command[x]&ph;
+{nob:command} Normal with option and brackets:
+            \command[x]{&ph;}&ph;
+{pla:command} Plain:
+            command&lt;Space
+{spe:command} Special:
+            command   &lt;-literal insertion of command
+{sep:command} creates separator. Good for aesthetics and usability :)
+{sbr:command} Breaks menu into submenus. &lt;command&gt; will be title of submenu.
+            Can be used also in package variable.
+
+Command can be also given without prefix:. The result is
+           \command
+          </programlisting>
+   </section>
+  </section>
+ </section>
+ <section id="latex-completion">
+  <title>Latex Completion</title>
+  <para>
+   &ls; provides an easy way to insert references to labels and
+   bibliographic entries and also provide filename arguments to commands
+   such as <literal>\includegraphics</literal>. Although the completion
+   capabilities are very diverse, &ls; only uses a single key
+   (<literal>&lt;F9&gt;</literal> by default) to do all of it. Pressing the
+   <literal>&lt;F9&gt;</literal> key does different things based on where
+   you are located. &ls; tries to guess what you might be trying to
+   complete at the location where you pressed
+   <literal>&lt;F9&gt;</literal>. For example, pressing
+   <literal>&lt;F9&gt;</literal> when you are within a
+   <literal>\ref</literal> command will try to list the
+   <literal>\label</literal>'s in the present directory. Pressing it when
+   you are in a <literal>\cite</literal> command will list bibliography
+   keys. &ls; also recognizes commands which need a file name argument and
+   will put up an explorer window for you to choose a filename.
+  </para>
+  <note id="ls-set-grepprg">
+   <title>Before you start with &ls;'s completion function...</title>
+   <para>
+    All of &ls;'s completion capabilities depend on a external program
+    being available on your system which can search through a number of
+    files for a reg-exp pattern. On *nix systems, the pre-installed
+    <literal>grep</literal> utility is more than adequate.  Most windows
+    systems come with a utility <literal>findstr</literal>, but that has
+    proven to be very inadequate (for one, it does not have an option to
+    force the file name to be displayed when searching through a single
+    file). Your best bet is to install <ulink
+     url="http://www.cygwin.com">cygwin</ulink>, but if you think that's
+    overkill, you can <ulink
+     url="http://www.google.com/search?q=windows%20gnu%20grep">search
+     for</ulink> a windows implementation of GNU grep. (&ls; testing on
+    windows has been done with cygwin's port of GNU grep).
+   </para>
+   <para>
+    Once you have a <literal>grep</literal> program installed, you need to
+    set the <literal>'grepprg'</literal> option for vim. Make sure you use a
+    setting which forces the program to display file names even when you are
+    searching through a single file. For GNU grep, the syntax is
+    <programlisting>set grepprg=grep\ -nH\ $*</programlisting>
+   </para>
+  </note>
+  <section id="ls-completion-usage">
+   <title id="ls-completion-usage.title">&ls; completion example</title>
+   <para>
+    Consider the situation where you are editing a file with two equations
+    labelled <literal>eqn:euler</literal> and <literal>eqn:einstein</literal>.
+    Now you want to insert a reference to one of these equations. To do this,
+    you type the <literal>\ref{eqn:}</literal> command and with the cursor
+    placed after <literal>eqn:</literal>, press <literal>&lt;F9&gt;</literal>.
+    This will bring up two new windows beneath the main window you were working
+    in as shown in the figure below. 
+    <programlisting>
+      8 These are a couple of equations:
+      9 +--  4 lines: eqnarray (eqn:euler) :   e^{j\pi} + 1 &amp;=&amp; 0---------------
+     13 +--  4 lines: equation (eqn:einstein) :   E = m c^2---------------------
+     17
+     18 These are a couple of figures:
+     19 +--  7 lines: figure (fig:monkeys) : Monkeys can Type-------------------
+     26 +--  7 lines: figure (fig:shakespeare) : Shakespeare could not type-----
+     33
+     34 This is a reference to \ref{eqn:}&ph;
+     35
+     36
+     37 \end{document}
+     38
+~
+~
+~
+newfile.tex                                                   34,32          Bot
+newfile.tex|11| \label{eqn:euler}
+newfile.tex|15| \label{eqn:einstein}
+~
+[Error List]                                                  1,1            All
+      7
+      8 These are a couple of equations:
+      9 \begin{eqnarray}
+     10   e^{j\pi} + 1 &amp;=&amp; 0
+     11   \label{eqn:euler}
+     12 \end{eqnarray}
+     13 \begin{equation}
+     14   E = m c^2
+     15   \label{eqn:einstein}
+     16 \end{equation}
+newfile.tex [Preview]                                         11,3           21%
+  </programlisting>
+   </para>
+   <para>
+    The first window (shown as <literal>[Error&nbsp;List]</literal> above) is a
+    <literal>|cwindow|</literal> containing a list of possible matches for the
+    reference. The cursor will be located in the first line of this window. The
+    bottom window is a <literal>preview-window</literal> showing the context of
+    the <literal>\label</literal>. Moving around in the
+    <literal>[Error&nbsp;List]</literal> window automatically scrolls the
+    preview window so as to always keep showing the context of the
+    <literal>\label</literal> being viewed in the
+    <literal>[Error&nbsp;List]</literal> window. You can also press
+    <literal>J</literal> and <literal>K</literal> in the
+    <literal>[ErrorList]</literal> window to scroll the preview window up and
+    down.
+   </para>
+   <para>
+    To insert one of the labels, simply position the cursor in the correct line
+    in the <literal>[Error&nbsp;List]</literal> window and press
+    <literal>&lt;enter&gt;</literal>. This will immediately close the two newly
+    opened windows, get back to the correct location in the original file being
+    edited and insert the label into the <literal>\ref</literal> command. 
+   </para>
+   <para>
+    If you notice carefully in the example above, the
+    <literal>[Error&nbsp;List]</literal> window only showed the matches for the
+    equations and did not list any of the figure labels. This is because we
+    pressed <literal>&lt;F9&gt;</literal> after <literal>\ref{eqn:</literal>
+    instead of simply after <literal>\ref{</literal>. This caused &ls; to
+    search only for those labels which started with the string
+    <literal>eqn:</literal>. If you had pressed
+    <literal>&lt;F9&gt;</literal> after a <literal>\ref{</literal>, you would
+    have been shown matches from <emphasis>all</emphasis> labels, not just
+    those starting with <literal>eqn:</literal>.
+   </para>
+   <para>
+    Thus prefixing all your labels with <literal>eqn:</literal>,
+    <literal>fig:</literal>, <literal>tab:</literal> etc. depending on what you
+    are labelling will lead to an easier time completing references.
+   </para>
+  </section>
+  <section id="ls-completion-ref">
+   <title>&ls; \ref completion</title>
+   <para>
+    Pressing <literal>&lt;F9&gt;</literal> when you are within a partially
+    completed <literal>\ref</literal> command will split open a window
+    (named <literal>__OUTLINE__</literal>) which contains a nicely
+    formatted list of all the <literal>\label</literal>s found in the
+    present project.  The <literal>\label</literal>s are heirarchically
+    arranged according to which <literal>\section</literal>,
+    <literal>\subsection</literal> etc of the overall document structure
+    they are present in. For example, when you first press
+    <literal>&lt;F9&gt;</literal> after typing <literal>\ref{</literal>,
+    you should see something like:
+    <programlisting>
++-- 54 lines: 2. Kinematics--------------------------------
++-- 98 lines: 3. Aerodynamics of the MFI thorax------------
++-- 40 lines: 4. Jump Resonance in Fourbar Mechanisms------
++-- 28 lines: 5. Design and Fabrication Issues-------------
+    </programlisting>
+    Each chapter is |fold|ed away so that you can quickly jump to the
+    correct section/subsection in which the relevant equation is defined.
+    This makes inserting references significantly faster for large projects
+    with hundreds of equations. You can then open some of the folds to see
+    for example:
+    <programlisting>
++-- 54 lines: 2. Kinematics--------------------------------
+3. Aerodynamics of the MFI thorax
+    3.1. Aerodynamic modeling of the MFI wing forces
+        3.1.1. Geometric Specification
+               eqn:wingnormal-pos
+                 \nhat =  T_z(\theta_2) T_y(\theta_y)T_x(\theta_x)\nhat_0,
+               eqn:T-1
+                 T_1(\theta_2) &amp;=&amp; T_z(\theta_2)
+    </programlisting>
+    The <literal>&lt;Tab&gt;</literal> key is mapped in this window to
+    toggle folds so that you can quickly open/close folds in order to
+    navigate the heirarchy faster. Once you are positioned on a
+    label, press <literal>&lt;Enter&gt;</literal>. This closes the
+    <literal>__OUTLINE__</literal> window, returns to the window in which
+    you pressed <literal>&lt;F9&gt;</literal> and inserts the reference
+    at the current cursor position.
+   </para>
+   <note>
+    <title>Filtering labels by prefix</title>
+   <para>
+     You can press <literal>&lt;F9&gt;</literal> after typing part of the
+     <literal>\label</literal>. In this case, &ls; only presents
+     <literal>\label</literal>s which begin with the already filled
+     characters. You can use this to choose between equations, figures,
+     tables etc. if you consistently label equations to begin with
+     <literal>eqn:</literal>, figures to begin with <literal>fig:</literal>
+     etc. For example, with this scheme, pressing
+     <literal>&lt;F9&gt;</literal> after typing
+     <literal>\ref{eqn:</literal> will only list equations.
+   </para>
+   </note>
+   <note>
+   <para>
+     &ls; works the same way if you press <literal>&lt;F9&gt;</literal>
+     after any command which contains the letters <literal>ref</literal>.
+     Thus you can complete <literal>\eqref</literal> in exactly the same
+     manner.
+   </para>
+   </note>
+   <note>
+    <title>Requirements</title>
+    <para>
+     This method of preseting the <literal>\label</literal>s depends on Vim
+     being compiled with python support. To check if you have this, see the
+     output of the <literal>:ver</literal> command. If you see something
+     like <literal>+python</literal>, you are all set. Failing this, you
+     will need to have <literal>python</literal> somewhere in your
+     <literal>$PATH</literal>.
+    </para>
+   </note>
+  </section>
+  <section id="latex-completion-cite">
+   <title>&ls; <literal>\cite</literal> completion</title>
+   <para>
+    &ls; provides an easy way to insert references to bibliographic
+    entries. Pressing <literal>&lt;F9&gt;</literal> when the cursor is
+    placed inside a partially completed <literal>\cite</literal> command
+    will split open a new window (named <literal>__OUTLINE__</literal>)
+    which contains a formatted and syntax highlighted list of all bibtex
+    entries found. For example, pressing <literal>&lt;F9&gt;</literal>
+    after typing <literal>\ref{</literal> should present you with a window
+    which looks something like this:
+    <programlisting>
+Article [dickinson:science:99]
+   "Wing rotation and aerodynamic basis of insect flight"
+   M. H. Dickinson and F-O. Lehman and S. P. Sane
+   In Science, 1999
+
+Article [ellington:84:part1]
+   "The Aerodynamics of Hovering Insect Flight. I. The Quasi-Steady Analysis"
+   Ellington, C P
+   In Philosophical Transactions of the Royal Society of London. Series B, Biological Sciences, 1984
+
+Article [ellington:84:part2]
+   "The Aerodynamics of Hovering Insect Flight. II. Morphological Parameters"
+   Ellington, C P
+   In Philosophical Transactions of the Royal Society of London. Series B, Biological Sciences, 1984
+    </programlisting>
+   </para>
+   <para>
+    You can easily jump from one entry to another using the
+    <literal>'n'</literal> and <literal>'p'</literal> keys (to go to the
+    next / previous entry respectively).
+   </para>
+   <para>
+    You can also filter out a subset of the bibtex entries by pressing
+    <literal>'f'</literal> while in this window. Doing this presents the
+    following prompt:
+    <programlisting>
+Field acronyms: (`:let g:Tex_EchoBibFields = 0` to avoid this message)
+ [t] title         [a] author        [b] booktitle
+ [j] journal       [y] year          [p] bibtype
+ (you can also enter the complete field name)
+Enter filter criterion [field&lt;space&gt;value]:
+    </programlisting>
+    At the prompt, type
+    <programlisting>a ellington</programlisting>
+    Notice that the letter a is an acronym for <literal>author</literal>
+    according to the prompt above. Therefore this filter only shows those
+    bibtex entries whose author field contains the text
+    <literal>ellington</literal>. You can keep narrowing your selection by
+    repeatedly filtering the results. If you would like to remove all the
+    filters and see all entries again, press 'a', which removes
+    all the filters.
+   </para>
+   <para>
+    You can also sort the bibtex entries based on a field. To do this,
+    press 's'. This will present you with a prompt like in the case of the
+    filter and you are asked to choose a field. In this case, you would
+    type in a single character. This sorts the entries according to that
+    field.
+   </para>
+   <note>
+    <para>
+    <literal>&lt;F9&gt;</literal> will also work in a similar way after any
+    command which contains the word <literal>cite</literal> in it. For
+    example, pressing <literal>&lt;F9&gt;</literal> will also work with
+    <literal>\citenum</literal> etc.
+   </para>
+   </note>
+   <para>
+    The following logic is applied to find out which bibliographic entries
+    are included in the completion.
+   </para>
+   <orderedlist>
+    <listitem>
+     <para>
+      Firstly, if the present file has a <link
+       linkend="latex-master-file">master-file</link> defined for it, then &ls;
+      will perform the following steps on that file instead of on the
+      current file.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      First, the file is scanned for a <literal>\bibliography</literal>
+      command. To explain better, assume that a command
+      <programlisting>\bibliography{file1,file2}</programlisting> is found
+      in the present file. For each bibliography file, say
+      <literal>file1</literal>, &ls; first tries to see if a
+      <literal>.bib</literal> file, <literal>file1.bib</literal> can be
+      found. If so, it will scan it for bib-keys of the form
+      <literal>@BOOK{</literal> etc., and add these searches to the
+      completion list. If a <literal>.bib</literal> file cannot be found,
+      then it will try to see if <literal>file1.bbl</literal> can be found.
+      If so, &ls; will search it for bib-keys of the form
+      <literal>\bibitem</literal> and add these to the completion list.
+     </para>
+     <para>
+      You can set the location where &ls; will search for
+      <literal>.bib</literal> and <literal>.bbl</literal> files using the
+      <link
+       linkend="Tex_BIBINPUTS"><literal>|Tex_BIBINPUTS|</literal></link>
+      variable.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      If a <literal>\bibliography</literal> command is not found, then &ls;
+      tries to scan the present file for a
+      <literal>\begin{thebibliography}</literal> environment. If found,
+      &ls; searches the present file for bib-keys of the form
+      <literal>\bibitem</literal>.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Finally, it will try to see if this file includes other files
+      via the <literal>\input</literal> command. For each such file found,
+      &ls; will repeat the previous two steps stopping at the first file
+      which has either a <literal>\bibliography</literal> command or a
+      <literal>thebibliography</literal> environment.
+     </para>
+    </listitem>
+   </orderedlist>
+   <section id="cite-search-caching">
+    <title>Caching the <literal>\cite</literal> completion results</title>
+    <anchor id="TClearCiteHist"></anchor>
+    <para>
+     Often times, the editing cycle proceeds by first laying out a
+     comprehensive bibliography and then completing all the
+     <literal>\cite</literal> commands in one session. In such situations,
+     it is inefficient to scan the whole list of bibliography files for
+     bib-keys each time. &ls; provides a way to cache the results of the
+     cite completion search using the <link
+      linkend="Tex_RememberCiteSearch"><literal>Tex_RememberCiteSearch</literal></link>
+     variable. If set, &ls; will perform the search only the first time
+     <literal>&lt;F9&gt;</literal> is used. Next time on, it will reuse the
+     search results. If you wish to redo the search results, issue the
+     command
+     <programlisting>TClearCiteHist</programlisting>
+     This will redo the completion list next time you use
+     <literal>&lt;F9&gt;</literal>.
+    </para>
+   </section>
+  </section>
+  <section id="ls-filename-completion">
+   <title>&ls; filename completion</title>
+   <para>
+    When you press <literal>&lt;F9&gt;</literal> at a location where &ls;
+    guesses a filename needs to be typed, then a new explorer window will
+    open up with the list of files. You can use this window to change
+    directories etc. Pressing <literal>&lt;enter&gt;</literal> on a filename
+    in the explorer window will automatically close the explorer window,
+    return to the location where you pressed <literal>&lt;F9&gt;</literal>
+    from and insert the filename into that position.
+   </para>
+   <para>
+    &ls; also tries to guess what kinds of files you might not want to
+    insert and hides those accordingly. For example, if you press
+    <literal>&lt;F9&gt;</literal> when you are located at
+    <literal>\includegraphics{</literal>, then &ls; knows that you will not
+    want to insert <literal>.tex</literal> files. Therefore, the explorer
+    window will automatically hide these files.
+   </para>
+   <para>
+    As of now, &ls; recognizes the following commands for filename
+    completion. Along with the commands, this table also lists the
+    files which &ls; will not show for completing each command.
+   </para>
+   <informaltable frame="all">
+    <tgroup cols="2">
+     <thead>
+      <row>
+       <entry>command</entry>
+       <entry>hide pattern</entry>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry><literal>\bibliography</literal></entry>
+       <entry><literal>'^\.,\.[^b]..$'</literal></entry>
+      </row>
+      <row>
+       <entry><literal>\include</literal> <literal>\includeonly</literal></entry>
+       <entry><literal>'^\.,\.[^t]..$'</literal></entry>
+      </row>
+      <row>
+       <entry><literal>\includegraphics</literal> <literal>\psfig</literal></entry>
+       <entry><literal>'^\.,\.tex$,\.bib$,\.bbl$,\.zip$,\.gz$'</literal></entry>
+      </row>
+      <row>
+       <entry><literal>\input</literal></entry>
+       <entry><literal>''</literal></entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </informaltable>
+  </section>
+  <section id="ls-completion-custom">
+   <title>Custom command completion</title>
+   <para>
+    &ls; also recognizes certain commonly used &latex; commands for the
+    <literal>&lt;F9&gt;</literal> key. At the moment, the
+    <literal>\bibliographystyle</literal>, <literal>\addtocontents</literal>
+    and the <literal>\addcontentsline</literal> commands are recognized,
+    although more will be added in the future. When you press the
+    <literal>&lt;F9&gt;</literal> after such a command, &ls; will prompt
+    you with a list of arguments which make sense for the command.
+   </para>
+   <para>
+    This functionality is available for commands for which a global
+    variable of the form
+    <literal>g:Tex_completion_{&lt;command&gt;}</literal> is defined where
+    <literal>&lt;command&gt;</literal> is the command name. This variable
+    is a comma separated list of values which this command takes. For
+    example, the argument to the <literal>\bibliographystyle</literal>
+    command is commonly one of <literal>abbr,alpha,plain,unsrt</literal>.
+    Therefore, &ls; defines
+    <programlisting>let g:Tex_completion_bibliographystyle = 'abbr,alpha,plain,unsrt'</programlisting>
+    You can define your own completion variables in a similar manner for
+    commands which you might use.
+   </para>
+  </section>
+ </section>
+ <section id="latex-compiling">
+  <title>&latex; Compiling</title>
+  <para>
+   This functionality, available via the TeX-Suite menu, provides various tools
+   to compile and debug &latex; files from within &vim;.
+  </para>
+  <para>
+   If you are using commonly used LaTeX tools, then you should be all set
+   as soon as you download and install &ls;.  In order to compile a
+   LaTeX file, simply press <literal>\ll</literal> while editing the file.
+   This runs latex on the current file and displays the errors in a
+   |quickfix-window| below the file being edited. You can then scroll
+   through the errors and press <literal>&lt;enter&gt;</literal> to be
+   taken to the location of the corresponding error. Along with the errors
+   being listed in the quickfix window, the corresponding log file is also
+   opened in |preview| mode beneath the quickfix window. It is scrolled
+   automatically to keep in sync with the error being viewed in the
+   quickfix window. You will be automatically taken to the location of the
+   first error/warning unless you set the <link
+    linkend="Tex_GotoError">g:Tex_GotoError</link> variable to 0.
+  </para>
+  <para>
+   &ls; also supports compiling &latex; into formats other than DVI. By
+   default, &ls; supports PDF and PS formats. In order to choose a format
+   other than DVI, use the <literal>TTarget</literal> command or the
+   <literal>TeX-Suite > Target Format</literal> menu item. This will ask you
+   to type in the name of the target format you want to compile to. If a rule
+   has been defined for the format (as described in the next
+   <link linkend="compiler-rules">section</link>), then &ls; will switch to
+   that format.
+  </para>
+  <para>Trying to choose a format for which no rule has been defined will
+   result in &ls; displaying a warning message without taking any action.
+  </para>
+  <para>
+   If you are using a multiple file project and need to compile a master
+   file while editing other files, then &ls; provides a way to specify the
+   file to be compiled as described in <link
+    linkend="latex-master-file">latex-master-file</link>.
+  </para>
+  <section id="compiler-rules">
+   <title>Setting Compilation rules</title>
+   <para>
+    In order to compile &latex; files into various formats, &ls; needs to know
+    which external programs to call and in which way they need to be called.
+    This information is provided to &ls; via a number of "rules". For each
+    format you want to compile to, you need to specify a rule. A rule is
+    specified by defining a variable of the form:
+    <programlisting>g:Tex_CompileRule_&lt;format&gt;</programlisting>
+    where <literal>&lt;format&gt;</literal> is a string like
+    <literal>"pdf"</literal>, <literal>"dvi"</literal> etc.
+   </para>
+   <para>
+    Example: By default, &ls; uses the following rule for compiling &latex;
+    documents into DVI.
+    <programlisting>g:Tex_CompileRule_dvi = 'latex --interaction=nonstopmode $*'</programlisting>
+   </para>
+   <para>
+    Default values are also provided for ps and pdf formats. You might want to
+    change these rules in texrc according to your local tex environment.
+   </para>
+   <note>
+    <para>
+     For win32 users user MikTeX, sometimes the latex compiler's output has a
+     bug where a single number is split across different lines. In this case,
+     put the included <literal>vim-latex</literal> file distributed with &ls;.
+    </para>
+   </note>
+  </section>
+  <section id="compiler-dependency">
+   <title>Handling dependencies in compilation</title>
+   <para>
+    &ls; also handles compiling dependencies automatically via certain
+    rules which specify the "dependency chain" for each target format. 
+    For example, if in your case, you use
+    <programlisting>.tex -&gt; .dvi -&gt; .ps -&gt; .pdf</programlisting>
+    to generate <literal>pdf</literal> files from <literal>dvi</literal>
+    files, then you will need to specify the following setting in your
+    &ls; configuration (see <link
+     linkend="customizing-latex-suite">customizing &ls;</link> for where
+    these settings should go):
+    <programlisting>
+let g:Tex_FormatDependency_pdf = 'dvi,ps,pdf'
+</programlisting>
+    This is a comma separated string of formats specifying the order in
+    which the formats to be compiled into should be chosen.  With this
+    setting, if you set the target format to <literal>pdf</literal>, then
+    the next time you compile via the <literal>\ll</literal> shortcut, &ls;
+    will first generate a <literal>dvi</literal> file, then use that to
+    generate the <literal>ps</literal> file and finally create the
+    <literal>pdf</literal> file from that.
+   </para>
+   <note>
+    <para>
+     If any of the intermediate formats is listed in the
+     <literal>g:Tex_MultipleCompileFormats</literal> setting as described
+     in the section <link linkend="compiling-multiple">Compiling multiple
+      times</link>, then &ls; might make multiple calls to the compiler to
+     generate the output file of that format.
+    </para>
+   </note>
+   <para>
+    Along with the <literal>g:Tex_FormatDependency_{format}</literal>
+    setting, you should ofcourse specify the rule for compiling to each of
+    the formats as described in the <link linkend="compiler-rules">previous
+    section</link>. For example, with the setting above, you could use:
+    <programlisting>
+let g:Tex_CompileRule_dvi = 'latex --interaction=nonstopmode $*'
+let g:Tex_CompileRule_ps = 'dvips -Ppdf -o $*.ps $*.dvi'
+let g:Tex_CompileRule_pdf = 'ps2pdf $*.ps'</programlisting>
+   </para>
+   <note>
+    <para>
+     By default, &ls; does not specify any compiler dependencies. Each
+     target format for which a rule has been derived will be compiled
+     independently.
+    </para>
+   </note>
+  </section>
+  <section id="compiling-multiple">
+   <title>Compiling multiple times</title>
+   <para>
+    Most &latex; compilers need to be re-run several times in several
+    commonly occurring situations in order to get a final camera ready copy.
+    For example, when <literal>\label</literal>'s change, when new
+    <literal>\cite</literal> commands are added etc. If the target format
+    you are compiling to requires multiple compilations, then you will
+    need to include the format in the
+    <literal>g:Tex_MultipleCompileFormats</literal> setting. This is a
+    comma separated string of formats which need multiple compilations to
+    be generated correctly.
+   </para>
+   <para>
+    By default, this setting contains just the <literal>dvi</literal>
+    format. If you use the <literal>pdflatex</literal> compiler to generate
+    <literal>pdf</literal> files, then you might want to also include
+    <literal>pdf</literal> into the above setting.
+   </para>
+   <para>
+    For every format included in the
+    <literal>g:Tex_MultipleCompileFormats</literal> setting described
+    above, &ls; will use the following logic to generate the file. Note
+    that although the following description uses <literal>latex</literal>
+    to refer to the compiler, it could be some other compiler such as
+    <literal>pdflatex</literal> for generating <literal>pdf</literal>
+    output.
+   </para>
+   <para>
+    <orderedlist>
+     <listitem>If there was a <literal>.idx</literal> file, then remember
+      its contents.</listitem>
+     <listitem>Run <literal>latex</literal>.</listitem>
+     <listitem>If the <literal>.idx</literal> file changed due to the latex
+      compiler, then run <literal>makeindex</literal> to redo the
+      <literal>.ind</literal> file and then remember to rerun latex.
+     </listitem>
+     <listitem>
+      <para>
+       If the <literal>.aux</literal> file generated by the latex
+       compiler contains a <literal>\bibdata</literal> line, then it
+       means that we are using a <literal>.bib</literal> file. Therefore,
+       run <literal>bibtex</literal>.
+      </para>
+      <note>
+       <para>
+        This means that we will always run <literal>bibtex</literal>
+        whenever we use the <literal>\bibliography</literal> command
+        whether or not we actually need to. At this time, &ls; does not
+        parse the <literal>.aux</literal> file before and after the latex
+        compiler to see if we are required to rerun
+        <literal>bibtex</literal>.
+       </para>
+      </note>
+     </listitem>
+     <listitem>
+      If the <literal>.bbl</literal> file changes because of this, then
+      remember to rerun latex again.
+     </listitem>
+     <listitem>Also, we check to see if the &latex; compiler gives certain
+      standard warnings which notify that we need to compile once again. In
+      this case also, remember to rerun &latex;.</listitem>
+     <listitem>If we found we had to rerun latex, then we repeat
+      the steps above but not running <literal>makeindex</literal> or
+      <literal>bibtex</literal> again.</listitem>
+    </orderedlist>
+   </para>
+   <para>
+    The &latex; file is compiled atmost 5 times using this logic.  These
+    steps will ensure that on most platforms/environments, you will get a
+    clean output with all the cross-references, citations etc correctly
+    labelled and ordered. 
+   </para>
+  </section>
+  <section id="compiler-output-customization">
+   <title>Customizing the compiler output</title>
+   <para>
+    Most &latex; compilers produce a very large amount of output during
+    compilation, most of which is not relevant to debugging type-setting
+    errors. The compiler plugin provided with &ls; (which is an enhanced
+    version of the standard compiler plugin maintained by Artem Chuprina),
+    provides a way to filter the compiler output so that the actual
+    errors/warnings can be presented much more concisely.
+   </para>
+   <para>
+    The compiler plugin is set up by default to function in a "non-verbose",
+    "ignore-common-warnings" mode, which means that irrelevant lines from the
+    compiler output will be ignored and some very common warnings are also
+    ignored.
+    &ls; does this via the global variable <link
+     linkend="Tex_IgnoredWarnings"><literal>g:Tex_IgnoredWarnings</literal></link>.
+    This is a list of patterns, which can be used to filter out (or ignore)
+    some or the warnings and errors reported by the compiler. See the link
+    above for its default value.
+   </para>
+   <para>
+    &ls; uses the <link
+     linkend="Tex_IgnoreLevel"><literal>g:Tex_IgnoreLevel</literal></link>
+    setting to set a default ignore level. For example, for the default
+    value of 4, &ls; ignores warnings and errors matching the first 4
+    patterns in <literal>g:Tex_IgnoredWarnings</literal>.
+   </para>
+   <para>
+    In addition to setting a default value of the ignore level, &ls;
+    provides the ability to set the level dynamically, using the
+    <literal>TCLevel</literal> command. For example, if you issue the
+    command:
+    <programlisting>TCLevel 3</programlisting>
+    from within &vim;, then the next time you compile the document, &ls; will
+    ignore warnings and errors which match the first three patterns in
+    <literal>g:Tex_IgnoredWarnings</literal>.
+   </para>
+   <para>
+    When TCLevel is called with the unquoted string strict as follows:
+    <programlisting>TClevel strict</programlisting>
+    then &ls; switches to a "verbose", "no-lines-ignored" mode which is useful
+    when you want to make final checks of your document and want to be careful
+    not to let things slip by.
+   </para>
+   <para>
+    See the explanation of the settings <link
+     linkend="Tex_IgnoredWarnings">g:Tex_IgnoredWarnings</link> and <link
+     linkend="Tex_IgnoreLevel">g:Tex_IgnoreLevel</link> to find out how to
+    customize the filtering done by &ls;
+   </para>
+
+  </section>
+  <section id="part-compiling">
+   <title>Compiling parts of a file</title>
+   <para>
+    &ls; also provides a way to compile a fragment of a document. This can be
+    very useful while debugging a complex equation or one chapter in a book,
+    etc. 
+   </para>
+   <para>
+    To do this, visually select a portion of the text and press
+    <literal>\ll</literal> while in visual mode. The visually selected portion
+    will be saved to a temporary file with the preamble from the current
+    document prepended. &ls; will then switch focus to this temporary file and
+    compile it. Continue to debug this file as required and then replace the
+    portion of the original file with this one. 
+   </para>
+   <para>
+    Pressing <literal>\lv</literal> while viewing the temporary file will
+    view the output file generated from the temporary file, not the original
+    file
+   </para>
+   <para>
+    Two commands |TPartComp| and |TPartView| are provided to be able to get
+    this functionality via the command line.
+   </para>
+   <para>
+    From release 1.6 onwards of &ls;, the temporary file created
+    for part compilation will reside in the same directory as the file from
+    which the fragment is being created. This ensures that any relative
+    path-names defined in the fragment will still work. &ls; will
+    attempt to clean the temporary file(s) created when Vim exits.
+   </para>
+  </section>
+ </section>
+ <section id="latex-viewing">
+  <title>Latex Viewing and Searching</title>
+  <section id="latex-viewing-rules">
+   <title>Setting Viewing rules</title>
+   <para>
+    In order to view the output files created by compiling the source
+    files, you need to specify which external program &ls; should call. You
+    can specify the external program using one of two settings
+    <link linkend="Tex_ViewRule_format">Tex_ViewRule_format</link> or <link
+     linkend="Tex_ViewRuleComplete_format">Tex_ViewRuleComplete_format</link>.
+    By default, &ls; has default settings for viewing various common output
+    formats via the <literal>Tex_ViewRule_format</literal> settings, so
+    that if you are using commonly used programs, you should be all set to
+    view compiled files from within &vim; by simply pressing
+    <literal>\lv</literal>.
+   </para>
+   <note>
+    <para>
+     The viewing function also takes the <link
+      linkend="latex-master-file"><literal>*.latexmain</literal></link> file
+     into account to decide which file to show.
+    </para>
+   </note>
+   <para>
+    If pressing <literal>\lv</literal> does not work, then it most probably
+    has to do with incorrect settings of the <link
+     linkend="Tex_ViewRule_format"><literal>g:Tex_ViewRule_&lt;format&gt;</literal></link>
+    where <literal>&lt;format&gt;</literal> is the format you are
+    attempting to view. See the link above for how to set this according to
+    your system.
+   </para>
+   <note>
+    <para>
+     On Windows and OS/X, you can leave the view rule empty to open the document
+     with the default viewer on your system. On Linux/UNIX systems, you can use
+     the <literal>xdg-open</literal> command to open the document with the default
+     viewer.
+    </para>
+   </note>
+   <para>
+    In addition to viewing the files, &ls; also supports forward and inverse
+    searching for certain common tools for viewing documents.
+    See the next few sections for details on forward and inverse searching,
+    including an overview of viewers.
+   </para>
+  </section>
+  <section id="forward-searching">
+   <title>Forward Searching documents</title>
+   <para>
+    Forward searching refers to making a viewer display a given document at
+    a given location from within &vim;. At present, these viewers are known to support
+    forward searching, but viewers that are not listed here may work, too:
+     <informaltable frame="all">
+      <tgroup cols="3">
+       <thead>
+        <row>
+         <entry>Viewer</entry>
+         <entry>OS</entry>
+         <entry>Supported documents</entry>
+         <entry>Comment</entry>
+        </row>
+       </thead>
+       <tbody>
+        <row>
+         <entry><ulink url="http://skim-app.sourceforge.net/">Skim</ulink></entry>
+         <entry>Apple / OS X Tiger</entry>
+         <entry>PDF</entry>
+         <entry>Supports also inverse searching</entry>
+        </row>
+        <row>
+         <entry><ulink url="http://pdfview.sourceforge.net/">PDFView</ulink></entry>
+         <entry>Apple / OS X</entry>
+         <entry>PDF</entry>
+         <entry>No longer in development, supports also inverse searching</entry>
+        </row>
+        <row>
+         <entry><ulink url="http://www2.ing.unipi.it/~d9615/homepage/texniscope.html">TeXniscope</ulink></entry>
+         <entry>Apple</entry>
+         <entry>PDF, DVI</entry>
+         <entry></entry>
+        </row>
+        <row>
+         <entry><ulink url="http://www.miktex.org/">YAP</ulink></entry>
+         <entry>Windows</entry>
+         <entry>DVI, PS</entry>
+         <entry>ships with MikTex</entry>
+        </row>
+        <row>
+         <entry><ulink url="http://blog.kowalczyk.info/software/sumatrapdf/">Sumatra PDF</ulink></entry>
+         <entry>Windows</entry>
+         <entry>PDF</entry>
+         <entry></entry>
+        </row>
+        <row>
+         <entry><ulink url="http://developer.kde.org/~kdvi/">kdvi</ulink></entry>
+         <entry>Linux/UNIX</entry>
+         <entry>DVI</entry>
+         <entry></entry>
+        </row>
+        <row>
+         <entry><ulink url="http://okular.kde.org/">okular</ulink></entry>
+         <entry>Linux/UNIX</entry>
+         <entry>DVI, PDF, PS and many more</entry>
+         <entry>Included in KDE 4</entry>
+        </row>
+        <row>
+         <entry><ulink url="http://math.berkeley.edu/~vojta/xdvi.html">xdvi</ulink></entry>
+         <entry>Linux/UNIX</entry>
+         <entry>DVI</entry>
+         <entry></entry>
+        </row>
+        <row>
+         <entry><ulink url="http://xdvi.sourceforge.net/">xdvik</ulink></entry>
+         <entry>Linux/UNIX</entry>
+         <entry>DVI</entry>
+         <entry></entry>
+        </row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+    
+    Pressing <literal>\ls</literal> from within &vim;
+    should make the viewer display the portion of the document where your
+    cursor is placed.
+   <note>
+    <para>
+     OS/X users need to set the <literal>g:TreatMacViewerAsUNIX</literal> flag
+     to <literal>1</literal> and provide a UNIX-like viewrule, that expects as
+     arguments the document, the linenumber and the sourcefile in this order.
+    </para>
+   </note>
+   </para>
+   <anchor id="enabling-searching" />
+   <note>
+    <title>Enabling Forward and Inverse Searching</title>
+    <para>
+     Most DVI viewers need "source-special" information in order to do
+     forward (and inverse) searching. This information is embedded in the
+     <literal>dvi</literal> file if the &latex; source is compiled with the
+     <literal>--src-specials</literal> option. By default, &ls; does not
+     supply this argument to the compiler. See the section on
+     <literal><link
+       linkend="Tex_CompileRule_format">g:Tex_CompileRule_dvi</link></literal>
+     to find out how this option can be set.
+
+     For pdf viewers you need to use the <ulink url="http://itexmac.sourceforge.net/pdfsync.html">pdfsync</ulink>
+     package in your LaTeX document.
+    </para>
+   </note>
+  </section>
+  <section id="inverse-searching">
+   <title>Inverse Searching</title>
+   <para>
+    Inverse searching refers to the viewer telling &vim; to display the
+    &latex; source file at a given location when you double-click in the 
+    viewer window.
+   </para>
+   <para>
+    You will need to <link linkend="enabling-searching">enable
+     searching</link> in order to use this functionality.
+   </para>
+   <para>
+    You will also need to specify certain settings to the DVI viewer
+    conveying the syntax which it needs to use to tell &vim; how to display
+    the source file. In <literal>YAP</literal>, you can set this option in
+    <literal>View > Options > Inverse Search</literal>. The
+    <literal>Command Line</literal> field needs to be set as follows:
+    <programlisting>"C:\Program Files\vim\vim61\gvim" -c ":RemoteOpen +%l %f"</programlisting>
+    The command <literal>:RemoteOpen</literal> is supplied when you install
+    &ls;.
+   </para>
+   <para>
+    On *nix machines, &ls; attempts to call the DVI viewer in such a way
+    that it already knows how to communicate with &vim;. If this does not
+    seem to be working, you can use the <literal>RemoteOpen</literal>
+    command described above.
+   </para>
+  </section>
+ </section>
+ <section id="latex-folding">
+  <title>Latex Folding</title>
+  <para>
+   &ls; ships with the plugin SyntaxFolds.vim which is a plugin for
+   creating "fake" syntax folds on the fly. The fold method is actually manual
+   but the folding is based on &latex; syntax. This offers a speed increase over
+   regular syntax folding. Ofcourse it has the disadvantage that the folds are
+   not dynamic, i.e newly created syntax items are not automatically folded up.
+   (This is a compromise between speed and convenience).
+  </para>
+  <para>
+   When you open up a LaTeX file, all the portions will be automatically folded
+   up. However, no new folds will be created until you press
+   <literal>&lt;F6&gt;</literal> or <literal>\rf</literal>. (rf
+   stands for "refresh folds").
+  </para>
+  <para>
+   The fold-text is set to the first line of the folded text unless the fold is a
+   table, figure etc. (an environment). In this case, if a \caption and/or a
+   label is found in the folded region, then those are used to make a more
+   meaningful fold-text, otherwise the second line of the environment is displayed
+   along with the name of the environment. In other words, the following
+   <programlisting>\begin{figure}[h]
+    \centerline{\psfig{figure=slidercrank.eps,height=6cm}}
+    \caption{The Slider Crank Mechanism.}
+    \label{fig:slidercrank}
+\end{figure}
+% a LaTeX comment.
+\begin{eqnarray}
+    \sin(\pi) = 0
+\end{eqnarray}</programlisting>
+  </para>
+  <para>
+   will be shown as:
+   <programlisting>+---  5 lines: figure (fig:slidercrank) : The Slider Crank Mechanism. -----
+% a LaTeX comment.
++---  3 lines: eqnarray () : \sin(\pi) = 0 --------------------------------</programlisting>
+  </para>
+  <section id="default-folding">
+   <title>Default Folding Scheme in &ls;</title>
+   <para>
+    By default &ls; creates folds in the following manner:
+   </para>
+   <programlisting>\chapter
+\section
+%%fakesection
+    \subsection
+        \subsubsection
+            \item
+                \equation
+                \eqnarray
+                \figure
+                \table
+                \footnote</programlisting>
+   <para>
+    The indentation shows the "nestedness" of the folding scheme.
+    See the <link linkend="customizing-what-to-fold">next section</link> to
+    see how you can change this scheme.
+   </para>
+  </section>
+  <section id="customizing-what-to-fold">
+   <title>Customizing what to fold</title>
+   <para>
+    From version 1.6 onwards, the folding in &ls; can be controlled
+    to a large extent via a number of global variables.
+   </para>
+   <section id="Tex_FoldedSections">
+    <title>Tex_FoldedSections</title>
+    <para>
+     This entry defines which sections will be folded. This
+     setting is a comma separated list of section names. 
+     The default value is:
+     <programlisting>part,chapter,section,%%fakesection,
+subsection,subsubsection,paragraph</programlisting>
+     Each of the entries in the list will fold up a section of the
+     corresponding name. The <literal>%%fakesection</literal> section is
+     provided as a means for the user to group lines into "fake" sections.
+     A <literal>%%fakesection</literal> is assumed to start on a line which
+     begins with the string <literal>%%fakesection</literal> and continue
+     till the start of the next <literal>\section</literal>,
+     <literal>\subsection</literal> or any other section.
+    </para>
+    <para>
+     See also <link linkend="fold-setting-advanced">advanced fold
+      settings</link>.
+    </para>
+   </section>
+   <section id="Tex_FoldedEnvironments">
+    <title>Tex_FoldedEnvironments</title>
+    <para>
+     This entry defines which environments will be folded. It is a
+     comma separated string of words each of which defines a single
+     environment. The default setting is
+     <programlisting>verbatim,comment,eq,gather,
+align,figure,table,thebibliography,
+keywords,abstract,titlepage</programlisting>
+     The words need not be standard Latex environments. You can
+     add any word you like. Also, each word will fold up all
+     environments whose name begins with that word. For example, in
+     the setting above, the word <literal>"eq"</literal> folds up the
+     <literal>\begin{equation}</literal>,
+     <literal>\begin{eqnarray}</literal>,
+     <literal>\begin{eqnarray*}</literal> environments. To avoid
+     this, you can replace the word <literal>"eq"</literal> with
+     <literal>"eq}"</literal>.
+    </para>
+    <para>
+     See also <link linkend="fold-setting-advanced">advanced fold
+      settings</link>.
+    </para>
+   </section>
+   <section id="Tex_FoldedCommands">
+    <title>Tex_FoldedCommands</title>
+    <para>
+     This entry defines which commands will be folded. It is a comma
+     separated string of words each of which defines a single command.
+     The default setting is empty, i.e no commands are folded.
+     The words need not be standard Latex commands. You can use whatever
+     words you like. Each word will fold all commands whose name begins
+     with that word as in the case of the <link
+      linkend="Tex_FoldedEnvironments">Tex_FoldedEnvironments</link>
+     variable.
+    </para>
+    <note>
+     <para>
+      It is very difficult to fold commands reliably because it is very
+      difficult to create a regexp which will match a line containing
+      unmatched parentheses (or curly brackets), but will not match a line
+      containing matched parentheses.
+     </para>
+     <para>
+      Just to make things safer, only lines which start a command but do
+      not contain additional curly braces after the command has started are
+      folded. In other words, if you wanted to fold the the command
+      <literal>"mycommand"</literal>, then the  lines
+      <programlisting>\mycommand{This is a line
+and some more text on the next line
+}</programlisting>
+      will be folded, but the lines
+      <programlisting>\mycommand{This is a \textbf{line}
+and some more text
+}</programlisting>
+      will not be folded. This is a bug which is very difficult to fix.
+     </para>
+    </note>
+    <para>
+     See also <link linkend="fold-setting-advanced">advanced fold
+      settings</link>.
+    </para>
+   </section>
+   <section id="Tex_FoldedMisc">
+    <title>Tex_FoldedMisc</title>
+    <para>
+     This entry defines fold syntax for certain items which do not
+     naturally fit into the section, environment of command lists. It is a
+     comma separated list of words. The default value is:
+     <programlisting>item,preamble,&lt;&lt;&lt;</programlisting>
+     <note>
+      <para>
+       Unlike the other Tex_FoldedXXXX variables, the words in this setting
+       are limited to take values from the following list:
+      </para>
+      <para>
+       <informaltable frame="all">
+        <tgroup cols="2">
+         <thead>
+          <row>
+           <entry>Value</entry>
+           <entry>Meaning</entry>
+          </row>
+         </thead>
+         <tbody>
+          <row>
+           <entry>comments</entry>
+           <entry>Folds up contiguous blocks of comments</entry>
+          </row>
+          <row>
+           <entry>item</entry>
+           <entry>Folds up the <literal>\item</literal>s within list
+            environments</entry>
+          </row>
+          <row>
+           <entry>preamble</entry>
+           <entry>Folds up the preamble of a document. (The part between
+            the <literal>\documentclass</literal> command and the
+            <literal>\begin{document}</literal> environment)</entry>
+          </row>
+          <row>
+           <entry><literal>&lt;&lt;&lt;</literal></entry>
+           <entry>Folds defined manually by the user using the
+            <literal>&lt;&lt;&lt;</literal> and
+            <literal>&gt;&gt;&gt;</literal> strings as fold-markers.</entry>
+          </row>
+         </tbody>
+        </tgroup>
+       </informaltable>
+       Any other words in the <literal>Tex_FoldedMisc</literal> setting
+       are silently ignored.
+      </para>
+     </note>
+    </para>
+    <para>
+     See also <link linkend="fold-setting-advanced">advanced fold
+      settings</link>.
+    </para>
+   </section>
+   <section id="fold-setting-advanced">
+    <title>Advanced Fold setting details</title>
+    <para>
+     The order of the words in the <literal>Tex_FoldedXXXX</literal>
+     variables is <emphasis>important</emphasis>. The order defines the
+     order in which the folds are nested. For example, the value
+     <literal>"subsection,section"</literal> for the
+     <literal>Tex_FoldedSections</literal> variable will not fold any
+     subsections at all. This is because the folds are created in the
+     <emphasis>reverse</emphasis> order in which they occur in the
+     <literal>Tex_FoldedSections</literal> setting and also, once a fold is
+     created, the interior of the fold is not examined for creating
+     additional folds. In the above case, this means that a
+     <literal>\section</literal> is folded first and then its interior is
+     not examined further. The correct value should have been
+     <literal>"section,subsection"</literal>
+    </para>
+    <anchor id="fold-setting-adding" />
+    <para>
+     Each of the fold setting variables
+     <literal>Tex_FoldedSections</literal>,
+     <literal>Tex_FoldedEnvironments</literal> etc., as explained previously
+     is a comma separated string of variables. However, to make it easier
+     to <emphasis>add</emphasis> to the default settings without having to
+     repeat the whole default setting again, &ls; uses the following logic
+     in forming the complete setting string from the
+     <literal>Tex_FoldedXXXX</literal> variables. If the variable starts with
+     a comma, then <literal>Tex_FoldedXXXX</literal> is added to the end of
+     the default string rather than replacing it. Similarly, if it ends
+     with a comma, then it will be prepended to the beginning of the
+     default setting rather than replacing it.
+    </para>
+    <para>
+     For example, if <literal>Tex_FoldedEnvironments</literal> is set to the
+     string <literal>"myenv"</literal>, then only an environment of the
+     form <literal>\begin{myenv}</literal> will be folded. However, if the
+     <literal>Tex_FoldedEnvironments</literal> setting is
+     <literal>",myenv"</literal>, then the <literal>\begin{myenv}</literal>
+     environment will be folded after all other environments in the default
+     setting have been folded. On the other hand if
+     <literal>Tex_FoldedEnvironments</literal> is of the form
+     <literal>"myenv,"</literal>, the <literal>\begin{myenv}</literal>
+     environment will be folded before the rest of the environments in the
+     default setting.
+    </para>
+   </section>
+  </section>
+  <section id="editing-folding">
+   <title>Editing the folding.vim file directly</title>
+   <para>
+    If you are using version 1.5 of &ls; or older, you will need to
+    directly edit the
+    <literal>$VIM/ftplugin/latex-suite/folding.vim</literal> file if you
+    wish to modify the folding scheme.  You will need to modify the
+    function <literal>MakeTexFolds()</literal> defined in that file to
+    modify the fold syntax.  <literal>MakeTexFolds</literal> makes a number
+    of calls to <literal>AddSyntaxFoldItem</literal>. Each such call
+    defines a new "fold item". The order in which these calls are made
+    defines how the folds are nested. For example, if you desire an
+    <literal>figure</literal> environment to be nested within a
+    <literal>section</literal>, then you should define the fold for the
+    <literal>figure</literal> first. The syntax of
+    <literal>AddSyntaxFoldItem</literal> is as follows:
+    <programlisting>AddSyntaxFoldItem(startpat, endpat, startoff, endoff [, startskip, endskip])</programlisting>
+    If the last two arguments are omitted, then they are assumed to default
+    to the empty strings <literal>''</literal>.
+    The explanation for each argument is as follows:
+   </para>
+   <informaltable frame="all">
+    <tgroup cols="2">
+     <thead>
+      <row>
+       <entry>Argument</entry>
+       <entry>Explanation</entry>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry><literal>startpat</literal></entry>
+       <entry>a line matching this pattern defines
+        the beginning of a fold.
+       </entry>
+      </row>
+      <row>
+       <entry>
+        <literal>endpat</literal>
+       </entry>
+       <entry>
+        a line matching this pattern defines the end of a fold.
+       </entry>
+      </row>
+      <row>
+       <entry><literal>startoff</literal></entry>
+       <entry>
+        this is the offset from the starting line at which folding will
+        actually start
+       </entry>
+      </row>
+      <row>
+       <entry><literal>endoff</literal></entry>
+       <entry>
+        like <literal>startoff</literal>, but gives the offset of the
+        actual fold end from the line satisfying <literal>endpat</literal>.
+        <literal>startoff</literal> and <literal>endoff</literal> are
+        necessary when the folding region does not have a specific end
+        pattern corresponding to a start pattern. for example in &latex;,
+        <literal>\section{Section Name}</literal> defines the beginning of
+        a section, but there is no command which specifically ends a
+        section. Thus a <literal>\section</literal>  is assumed to end 1
+        line <emphasis>before</emphasis> another section starts.
+       </entry>
+      </row>
+      <row>
+       <entry>
+        <literal>startskip</literal>  
+       </entry>
+       <entry>
+        A Pattern Which Defines The Beginning Of A "Skipped" Region.
+
+        For example, suppose we define a \itemize fold as follows:
+        <programlisting><literal>startpat</literal> =  '^\s*\\item',
+<literal>endpat</literal> = '^\s*\\item\|^\s*\\end{\(enumerate\|itemize\|description\)}',
+<literal>startoff</literal> = 0,
+<literal>endoff</literal> = -1</programlisting>
+
+        This defines a fold which starts with a line beginning with an
+        <literal>\item</literal> and ending one line before a line beginning with an
+        <literal>\item</literal> or <literal>\end{enumerate}</literal> etc.
+
+        Then, as long as <literal>\item</literal>'s are not nested things are fine.
+        However, once items begin to nest, the fold started by one
+        <literal>\item</literal> can end because of an
+        <literal>\item</literal> in an <literal>\itemize</literal>
+        environment within this <literal>\item</literal>. i.e, the following can happen:
+
+        <programlisting>\begin{itemize}
+\item Some text                         &lt;------- fold will start here
+This item will contain a nested item
+\begin{itemize}                         &lt;----- fold will end here because next line contains \item...
+\item Hello  
+\end{itemize}                           &lt;----- ... instead of here.
+\item Next item of the parent itemize  
+\end{itemize}</programlisting>
+
+        Therefore, in order to completely define a folding item which
+        allows nesting, we need to also define a "skip" pattern.
+        <literal>startskip</literal> and end skip do that.
+        Leave '' when there is no nesting.
+       </entry>
+      </row>
+      <row>
+       <entry>
+        <literal>endskip</literal>  
+       </entry>
+       <entry>
+        the pattern which defines the end of the "skip" pattern for
+        nested folds.
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </informaltable>
+   <note>
+    <title>Example 1</title>
+    <para>
+     A syntax fold region for the latex section is defined with the
+     following arguments to <literal>AddSyntaxFoldItem</literal>:
+     <programlisting>startpat = "\\section{"
+endpat   = "\\section{"
+startoff = 0
+endoff   = -1
+startskip = ''
+endskip = ''</programlisting>
+     Note that the start and end patterns are thus the same and
+     <literal>endoff</literal> has a negative value to capture the effect
+     of a section ending one line before the next starts.
+    </para>
+   </note>
+   <note>
+    <title>Example 2</title>
+    <para>
+     A syntax fold region for the \itemize environment is:
+     <programlisting>startpat = '^\s*\\item',
+endpat = '^\s*\\item\|^\s*\\end{\(enumerate\|itemize\|description\)}',
+startoff = 0,
+endoff = -1,
+startskip = '^\s*\\begin{\(enumerate\|itemize\|description\)}',
+endskip = '^\s*\\end{\(enumerate\|itemize\|description\)}'</programlisting>
+     Note the use of <literal>startskip</literal> and
+     <literal>endskip</literal> to allow nesting.
+    </para>
+   </note>
+  </section>
+ </section>
+ <section id="latex-project">
+  <title>Multiple file &latex; projects</title>
+  <anchor id="latex-project-example" />
+  <para>
+   Many &latex; projects contain multiple source files which are
+   <literal>\include</literal>d from a master file. A typical example of
+   this situation is a directory layout such as the following
+  </para>
+  <para>
+   <programlisting>thesis/
+    main.tex
+    abstract.tex
+    intro/
+        intro.tex
+        figures/
+            fig1.eps
+            fig2.eps
+    chapter1/
+        chap1.tex
+        figures/
+            fig1.eps
+    conclusion/
+        conclusion.tex
+        figures/</programlisting> 
+  </para>
+  <para>
+   In the above case, <literal>main.tex</literal> will typically look like
+  </para>
+  <para>
+    <programlisting>% file: main.tex
+\documentclass{report}
+\begin{document}
+
+\input{abstract.tex}
+\input{intro/intro.tex}
+\input{chapter1/chap1.tex}
+\input{conclusion/conclusion.tex}
+
+\end{document}</programlisting>
+  </para>
+  <para>
+   <anchor id="latex-master-file-specification" /> In such situations, you will
+   need to convey to &ls; that <literal>main.tex</literal> is the main file
+   which <literal>\input</literal>s the other files. This is done by creating
+   an empty file called <literal>main.tex.latexmain</literal> in the same
+   directory in which <literal>main.tex</literal> resides. This file is called
+   the <emphasis>master file</emphasis> in this manual. See <link
+    linkend="Tex_MainFileExpression">Tex_MainFileExpression</link> for an
+   alternative way of specifying the master file.
+  </para>
+  <note>
+   <para>
+    Here <literal>main.tex.latexmain</literal> is (obviously) a different
+    file from <literal>main.tex</literal> itself.
+    <literal>main.tex</literal> need not be renamed. This ofcourse
+    restricts each directory to have a single master file.
+   </para>
+  </note>
+  <para>
+   Each time &ls; opens a new &latex; file, it will try to see if it is
+   part of a multiple file project by searching upwards (to the root of
+   the file-system) from the current file's directory to see if it finds a
+   file of the form <literal>*.latexmain</literal>. If such a file is
+   found, then it is considered that the current file is part of a larger
+   project. The name of the &latex; master file is inferred directly from
+   the first part of the <literal>*.latexmain</literal> file as described
+   in the example above.
+  </para>
+  <section id="latex-project-settings">
+   <title>&ls; project settings</title>
+   <para>
+    If a <link linkend="latex-master-file">master file</link> is found,
+    then &ls; <literal>:source</literal>s the file. Thus this file needs to
+    contain valid &vim; commands. This file is typically used to store
+    project specific settings.
+   </para>
+   <para>
+    Some typical per-project settings which are best put in the master file
+    are
+    <simplelist>
+     <member><link
+       linkend="Tex_ProjectSourceFiles">Tex_ProjectSourceFiles</link></member>
+    </simplelist>
+   </para>
+  </section>
+  <section id="latex-master-file">
+   <title>Specifying which file to compile</title>
+   <para>
+    In the example described <link
+     linkend="latex-project-example">previously</link>, if you are editing
+    <literal>intro/intro.tex</literal> and press <literal>\ll</literal>,
+    then you still want &ls; to compile <literal>main.tex</literal>,
+    because <literal>intro/intro.tex</literal> is merely a fragment which
+    is <literal>\input</literal>'ed into <literal>main.tex</literal>. If
+    the master file is already specified using the
+    <literal>*.latexmain</literal> convention described <link
+     linkend="latex-project-example">previously</link>, then &ls; will automatically
+    compile the master file when you are editing any of its
+    <literal>\input</literal>'ed fragments. Thus pressing
+    <literal>\ll</literal> while editing <literal>intro/intro.tex</literal>
+    will compile <literal>main.tex</literal>.
+   </para>
+   <anchor id="Tex_MainFileExpression" />
+   <para>
+    If you wish to use some different logic to specify the main file name,
+    you can specify a custom expression via the
+    <literal>Tex_MainFileExpression</literal> variable. This is a string
+    containing a valid vim expression. In addition, you can use a variable
+    <literal>modifier</literal> which is in the format used for
+    <literal>|filename-modifiers|</literal>, for example,
+    <literal>':p:h'</literal>. You should utilize this variable to modify
+    the filename of the main file.
+    <programlisting>let g:Tex_MainFileExpression = 'MainFile(modifier)'
+function! MainFile(fmod)
+    if glob('*.latexmain') != ''
+        return fnamemodify(glob('*.latexmain'), a:fmod)
+    else
+        return ''
+    endif
+endif</programlisting>
+   </para>
+  </section>
+ </section>
+ <section id="latex-suite-commands-maps">
+  <title>&ls; Commands and Maps</title>
+  <para>
+   This section describes the maps and commands used in &ls;. It also
+   describes a way to change the map sequences according to your
+   preference.
+  </para>
+  <section id="latex-suite-maps">
+   <title>&ls; Maps</title>
+   <anchor id="remapping-latex-suite-keys" />
+   <para>
+    Most of the mappings used in &ls; can be mapped to a different key
+    combination to suit your particular needs. An example best explains the
+    procedure for doing this. Suppose you want to remap the
+    <literal>&lt;C-j&gt;</literal> key which &ls; (actually imaps.vim) uses
+    to jump to the next placeholder. To do this, you first need to find out
+    which <literal>&lt;Plug&gt;</literal> mapping
+    <literal>&lt;C-j&gt;</literal> is derived from. You will need to look
+    at the relevant section of this manual to do this. For example, the
+    section <link linkend="customize-imap-maps">IMAP mappings</link> has
+    the information that the <literal>&lt;C-j&gt;</literal> key is derived
+    from <literal>&lt;Plug&gt;IMAP_JumpForward</literal>. Therefore to
+    remap the <literal>&lt;C-j&gt;</literal> key to say
+    <literal>&lt;C-space&gt;</literal>, you will need to put a
+    statement like the following in your <literal>~/.vimrc</literal>.
+    <programlisting>imap &lt;C-space&gt; &lt;Plug&gt;IMAP_JumpForward</programlisting>
+   </para>
+   <note>
+    <para>
+     To change the <literal>IMAP</literal> mappings which affect jumping
+     between placeholders, the <literal>map</literal> statement above has
+     to be placed in your <literal>~/.vimrc</literal>. For other mappings
+     you can place the <literal>map</literal> statement in your
+     <literal>$VIM/ftplugin/tex.vim</literal> file.  The reason for this is
+     that the <literal>&lt;C-j&gt;</literal> maps are created in
+     <literal>plugin/imaps.vim</literal>, which is sourced as soon as &vim;
+     starts before sourcing any ftplugin files.
+    </para>
+   </note>
+   <section id="customize-imap-maps">
+    <title>IMAP mappings</title>
+    <para>
+     These mappings are utilized for jumping between placeholders as
+     described <link linkend="place-holders">here</link>. See the <link
+      linkend="latex-suite-maps">parent section</link> to find out how to
+     use this information to change the default maps.
+    </para>
+    <anchor id="Plug_IMAP_JumpForward" />
+    <anchor id="Plug_IMAP_JumpBack" />
+    <anchor id="Plug_IMAP_DeleteAndJumpForward" />
+    <anchor id="Plug_IMAP_DeleteAndJumBack" />
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <thead>
+       <row>
+        <entry>Plug map</entry>
+        <entry>Default Key</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry><literal>&lt;Plug&gt;IMAP_JumpForward</literal></entry>
+        <entry><literal>&lt;C-j&gt;</literal></entry>
+       </row>
+       <row>
+        <entry><literal>&lt;Plug&gt;IMAP_JumpBack</literal></entry>
+        <entry>(none)</entry>
+       </row>
+       <row>
+        <entry><literal>&lt;Plug&gt;IMAP_DeleteAndJumpForward</literal></entry>
+        <entry>(none)</entry>
+       </row>
+       <row>
+        <entry><literal>&lt;Plug&gt;IMAP_DeleteAndJumpBack</literal></entry>
+        <entry>(none)</entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     <literal>&lt;Plug&gt;IMAP_JumpForward</literal> takes you to the
+     location of the next <link
+      linkend="place-holders">place-holder</link>.
+    </para>
+    <para>
+     <literal>&lt;Plug&gt;IMAP_JumpBack</literal> takes you to the previous
+     <link linkend="place-holders">place-holder</link>.
+    </para>
+    <para>
+     <literal>&lt;Plug&gt;IMAP_DeleteAndJumpForward</literal> deletes the
+     presently selected place-holder and jumps to the next place-holder
+     irrespective of whether the present placeholder is empty or not and
+     ignoring the value of place-holder settings like <link
+      linkend="Imap_DeleteEmptyPlaceHolders"><literal>g:Imap_DeleteEmptyPlaceHolders</literal></link>
+     and <link
+      linkend="Imap_StickyPlaceHolders"><literal>g:Imap_StickyPlaceHolders</literal></link>
+    </para>
+    <para>
+     <literal>&lt;Plug&gt;IMAP_DeleteAndJumpBack</literal> deletes the
+     presently selected place-holder and jumps to the previous place-holder
+     irrespective of whether the present placeholder is empty or not and
+     ignoring the value of place-holder settings like <link
+      linkend="Imap_DeleteEmptyPlaceHolders"><literal>g:Imap_DeleteEmptyPlaceHolders</literal></link>
+     and <link
+      linkend="Imap_StickyPlaceHolders"><literal>g:Imap_StickyPlaceHolders</literal></link>
+    </para>
+   </section>
+   <section id="customize-alt-key-maps">
+    <title>Alt-Key mappings</title>
+    <para>
+     These mappings are are described in the section <link
+      linkend="altkey-mappings">Alt key macros</link>. See <link
+      linkend="remapping-latex-suite-keys">the parent section</link> to see
+     how to use the following information to remap keys.
+    </para>
+    <anchor id="Plug_Tex_MathBF" />
+    <anchor id="Plug_Tex_MathCal" />
+    <anchor id="Plug_Tex_LeftRight" />
+    <anchor id="Plug_Tex_InsertItemOnThisLine" />
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <thead>
+       <row>
+        <entry>Plug Mapping</entry>
+        <entry>Default Key</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry><literal>&lt;Plug&gt;Tex_MathBF</literal></entry>
+        <entry><literal>&lt;Alt-B&gt;</literal></entry>
+       </row>
+       <row>
+        <entry><literal>&lt;Plug&gt;Tex_MathCal</literal></entry>
+        <entry><literal>&lt;Alt-C&gt;</literal></entry>
+       </row>
+       <row>
+        <entry><literal>&lt;Plug&gt;Tex_LeftRight</literal></entry>
+        <entry><literal>&lt;Alt-L&gt;</literal></entry>
+       </row>
+       <row>
+        <entry><literal>&lt;Plug&gt;Tex_InsertItemOnThisLine</literal></entry>
+        <entry><literal>&lt;Alt-I&gt;</literal></entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+   </section>
+  </section>
+  <section id="latex-suite-commands">
+   <title>Latex Suite Commands</title>
+   <section id="TMacro">
+    <title>:TMacro [{macro}]</title>
+    <para>
+    When used without any arguments lists all available macros defined
+    in runtime ftplugin/latex-suite/macros/ directories and prompts you
+    to choose one of them. With one argument |:read| this macro under
+    cursor position. With more than one argument it will not work :) In
+    Vim >= 6.2 works completion of names of macros (see 'wildmenu',
+    'wildmode' for more about command-line completion).
+    </para>
+   </section>
+   <section id="TMacroEdit">
+    <title>:TMacroEdit [{macro}]</title>
+    <para>
+    Splits window for editing {macro}. When used without any arguments
+    lists all available macros defined in runtime
+    ftplugin/latex-suite/macros/ directories and prompt you to choose
+    one of them.  When you try to edit {macro} not from local directory
+    &ls; will copy it to your local directory with suffix
+    "-local". If local copy already exists &ls; prompt for
+    overwriting it.  In Vim >= 6.2 works completion of names of macros
+    (see 'wildmenu', 'wildmode' for more about command-line completion).
+    </para>
+   </section>
+   <section id="TMacroNew">
+    <title>:TMacroNew</title>
+    <para>
+     Splits window to write new macro. Directory in new buffer is
+     locally changed to &ls;/macros/.
+    </para>
+   </section>
+   <section id="TMacroDelete">
+    <title>:TMacroDelete [{macro}]</title>
+    <para>
+    Delets {macro} from your local ftplugin/latex-suite/macros/
+    directory.  When used without any arguments lists all available
+    macros defined in &ls;/macros/ directory and prompt you to
+    choose one of them.  When you choose to delete {macro} which is not
+    in your local directory &ls; will refuse to delete it.  In
+    Vim >= 6.2 works completion of names of macros (see 'wildmenu',
+    'wildmode' for more about command-line completion)
+    </para>
+   </section>
+   <section id="TPackage">
+    <title>:TPackage [{package, ...}]</title>
+    <para>
+     When used without any arguments lists name of the packages for
+     which support is available. If you are using &vim; GUI and have
+     <literal>Tex_Menus</literal> set to 1, then it will list all files
+     found in the <literal>$VIM/ftplugin/latex-suite/packages</literal>
+     directory. Otherwise, &ls; will list files found in the
+     <literal>$VIM/ftplugin/latex-suite/dictionaries</literal> directory.
+     Choosing a file from the list will insert a
+     <programlisting>\usepackage[&ph;]{&lt;packname&gt;}</programlisting> line into the
+     buffer at the current cursor location. For &vim; 6.2 and above, you
+     can use command-line completion to choose a package file. You can also
+     call <literal>TPackage</literal> with one or more package names
+     separated with spaces in which case, &ls; will insert
+     <literal>\usepackage</literal> lines for each of them in turn.
+    </para>
+    <para>
+     After inserting the <literal>\usepackage</literal> line(s), &ls; will
+     support it (them) in various ways as described in the section <link
+      linkend="package-actions">Actions taken for supported
+      packages</link>.
+    </para>
+   </section>
+   <section id="TPackageUpdate">
+    <title>:TPackageUpdate</title>
+    <para>
+     This command `reads' name of package under cursor and turns on
+     possible support.
+    </para>
+   </section>
+   <section id="TPackageUpdateAll">
+    <title>:TPackageUpdateAll</title>
+    <para>
+     After issuing this command latexSuite scans the file in
+     looking for not declared packages, removing not needed entries
+     from Packages menu and turning off not necessary packages'
+     dictionaries.
+    </para>
+   </section>
+   <section id="TTemplate">
+    <title>:TTemplate [{template}]</title>
+    <para>
+     When used without any arguments lists all available templates
+     from latex-suite/templates/ directory and prompts to choose
+     one of them.
+     With one argument :0|read| {template} file.
+     With more than one argument it will not work :)
+     In Vim >= 6.2 works completion of names of macros (see 'wildmenu',
+     'wildmode' for more about command-line completion)
+    </para>
+   </section>
+   <section id="TSection">
+    <title>:TSection [{argument}]</title>
+    <para>
+     Used without any arguments inserts last section type
+     (|latex-sectioning|).
+     Accepts arguments:
+     n&gt;     inserts section name in &lt;n&gt; logical level.
+     Levels are:
+     <informaltable>
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>0</entry><entry>part</entry></row>
+        <row><entry>1</entry><entry>chapter</entry></row>
+        <row><entry>2</entry><entry>section</entry></row>
+        <row><entry>3</entry><entry>subsection</entry></row>
+        <row><entry>4</entry><entry>subsubsection</entry></row>
+        <row><entry>5</entry><entry>paragraph</entry></row>
+        <row><entry>6</entry><entry>subparagraph</entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+
+     <informaltable>
+      <tgroup cols="2">
+       <tbody>
+        <row>
+         <entry>
+          +&lt;n&gt;    
+         </entry>
+         <entry>
+          inserts section name &lt;n&gt; logical levels above the last
+          used comand
+         </entry>
+         </row><row>
+         <entry>
+          -&lt;n&gt;    
+         </entry>
+         <entry>
+          inserts section name &lt;n&gt; logical levels below the last
+          used comand
+         </entry>
+         </row><row>
+         <entry>
+          +       
+         </entry>
+         <entry>
+          inserts section name one logical level below the last
+          used command (equal to +1).
+         </entry>
+         </row><row>
+         <entry>
+          ++      
+         </entry>
+         <entry>
+          inserts section name two logical levels below the last
+          used command (equal to +2).
+         </entry>
+         </row><row>
+         <entry>
+          -       
+         </entry>
+         <entry>
+          inserts section name one logical level over the last
+          used command (equal to -1).
+         </entry>
+         </row><row>
+         <entry>
+          --      
+         </entry>
+         <entry>
+          inserts section name two logical levels over the last
+          used command (equal to -2).
+         </entry>
+        </row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+
+     Command accepts also latexSuite mappings (|latex-macros|)
+     without preceding S and in lowercase:
+     <programlisting>:TSection pa</programlisting>
+     will result in <literal>\part{}</literal>. It is possible to use full names of
+     sections: <literal>:TSection part</literal>
+    </para>
+   </section>
+   <section id="TSectionAdvanced">
+    <title>:TSectionAdvanced</title>
+    <para>
+     Accepts the same arguments as |TSection| but leads to a couple
+     of questions (whether you want to include the section in the
+     table of contents, whether there is a shorter name for the
+     table of contents) and then creates a more intelligent
+     template.
+    </para>
+   </section>
+   <section id="TLook">
+    <title>:TLook</title>
+    <para>
+     Accepts one argument. Will look through .tex files in
+     directory of edited file for argument. It can be regexp. You
+     don't have to enclose argument in "". &lt;cr&gt; takes you to
+     location. Other keys work as described in |latex-viewer|.
+     Note: TLook uses :grep command and is using 'grepprg'. Its
+     regular expressions can be different from those of Vim.
+    </para>
+   </section>
+   <section id="TLookBib">
+    <title>:TLookBib</title>
+    <para>
+     Accepts one argument. Will look through .bib files in
+     directory of edited file for argument. It can be regexp. You
+     don't have to enclose argument in "". &lt;cr&gt; takes you to
+     location. Other keys work as described in |latex-viewer|.
+    </para>
+    <note>
+     <para>
+      TLookBib uses :grep command and is using 'grepprg'.  Its
+      regular expressions can be different from those of Vim.
+     </para>
+    </note>
+   </section>
+   <section id="TLookAll">
+    <title>:TLookAll</title>
+    <para>
+     Accepts one argument. Will look through all files in directory
+     of edited file for argument. It can be regexp. You don't have
+     to enclose argument in "". &lt;cr&gt; takes you to location. Other
+     keys work as described in |latex-viewer|.
+     Note: TLook uses :grep command and is using 'grepprg'.  Its
+     regular expressions can be different from those of Vim.
+    </para>
+   </section>
+   <section id="TPartComp">
+    <title>:TPartComp</title>
+    <para>
+     No argument allowed but accepts range in all formats. Define
+     fragment of interest with :'a,'b, :/a/,/b/, :'&lt;,'&gt; or :20,30.
+     All other rules of compilation apply.
+    </para>
+   </section>
+   <section id="TPartView">
+    <title>:TPartView</title>
+    <para>
+     Show last compiled fragment. All rules of viewing apply but
+     |latex-searching|.
+    </para>
+   </section>
+   <section id="Tshortcuts">
+    <title>:Tshortcuts [{arg}]</title>
+    <para>
+     Show shortcuts in terminal (not using menu). Without {arg}
+     you will see simple menu prompting for one of them. Possible
+     arguments:
+     <informaltable frame="none">
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>g</entry><entry>General shortcuts</entry></row>
+        <row><entry>e</entry><entry>Environment shortcuts</entry></row>
+        <row><entry>f</entry><entry>Font shortcuts</entry></row>
+        <row><entry>s</entry><entry>Section shortcuts</entry></row>
+        <row><entry>m</entry><entry>Math shortcuts</entry></row>
+        <row><entry>a</entry><entry>All shortcuts</entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+    </para>
+   </section>
+  </section>
+ </section>
+ <section id="customizing-latex-suite">
+  <title>Customizing &ls;</title>
+  <para>
+   Customizing &ls; is done by defining certain global variables in
+   <literal>$VIM/ftplugin/tex.vim</literal>, where
+   <literal>$VIM</literal> corresponds to <literal>~/.vim</literal> for *nix
+   machines and <literal>~/vimfiles</literal> for windows machines. This file
+   is not part of the &ls; distribution. You will need to create this file
+   yourself (or modify it if it exists) if
+   you need to change any default settings. Since this file is not
+   included as part of the &ls; distribution, it will not be over-written in
+   subsequent updates.
+  </para>
+  <para>
+   The default settings in &ls; are defined in
+   <literal>$VIM/ftplugin/latex-suite/texrc</literal>. Please take a look at
+   this file if you find this documentation incomplete or confusing. That file
+   is also well documented.
+  </para>
+  <para>
+   This chapter describes the various settings which effect &ls; and their
+   default values. The settings are broken up into sections according to the
+   behavior which they influence. 
+  </para>
+  <section id="ls-general-purpose-settings">
+   <title>General Settings</title>
+   <section id="Tex_Debug">
+    <title>Tex_Debug</title>
+    <para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>Type</entry><entry>boolean</entry></row>
+        <row><entry>Default Value</entry>
+         <entry><literal>0</literal></entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+     <para>
+      If set to 1, then &ls; will create certain global debug
+      statements which can be printed by doing
+      <programlisting>:call Tex_PrintDebug()</programlisting>
+     </para>
+    </para>
+   </section>
+   <section id="Tex_UsePython">
+    <title>Tex_UsePython</title>
+    <para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>Type</entry><entry>boolean</entry></row>
+        <row><entry>Default Value</entry>
+         <entry><literal>1</literal></entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+     <para>
+      If &ls; detects that your vim is python enabled (using
+      <literal>has('python')</literal>), then it tries to use python in
+      certain places to speed things up. If this misbehaves, you can set
+      this to zero, in which case, &ls; will use vimscript to accomplish
+      the same.
+     </para>
+    </para>
+   </section>
+  </section>
+  <section id="customizing-place-holders">
+   <title>Place-Holder Customization</title>
+   <para>
+    &ls; uses <link linkend="place-holders">place-holders</link> to minimize
+    using the movement keys while typing. The following settings affect how
+    place-holders are used.
+   </para>
+   <note>
+    <para>
+     These setting need to be set in your <literal>~/.vimrc</literal>, not
+     <literal>$VIM/ftplugin/tex.vim</literal> because these settings affect
+     the behavior of <literal>imaps.vim</literal>, which is a global plugin,
+     not a file-type plugin.
+    </para>
+   </note>
+   <section id="Imap_UsePlaceHolders">
+    <title>g:Imap_UsePlaceHolders</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Setting this to zero completely disables using place-holders.
+    </para>
+   </section>
+   <section id="Imap_PlaceHolderStart">
+    <anchor id="Imap_PlaceHolderEnd"></anchor>
+    <title>g:Imap_PlaceHolderStart &amp; g:Imap_PlaceHolderEnd</title>
+    <informaltable frame="all">
+     <tgroup cols="3">
+      <thead>
+       <row>
+        <entry>Setting</entry>
+        <entry>Type</entry>
+        <entry>Value</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry><literal>Imap_PlaceHolderStart</literal></entry>
+        <entry>String</entry>
+        <entry><literal>'&lt;+'</literal></entry>
+       </row>
+       <row>
+        <entry><literal>Imap_PlaceHolderEnd</literal></entry>
+        <entry>String</entry>
+        <entry><literal>'+&gt;'</literal></entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     These settings affect the strings displayed at the beginning and end of
+     the place-holder string. Set these strings to a value different than a
+     commonly occurring sequence of characters. 
+    </para>
+    <note>
+     <title>TIP</title>
+     <para>
+      If you use the <literal>latin1</literal> encoding and do not type in
+      french, then you can set these strings to the <literal>\xab</literal>
+      and <literal>\xbb</literal> characters (the french quotation marks).
+     </para>
+    </note>
+   </section>
+   <section id="Imap_DeleteEmptyPlaceHolders">
+    <title>g:Imap_DeleteEmptyPlaceHolders</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     When set to one, non-descriptive or empty place-holders are deleted on
+     pressing <literal>&lt;Ctrl-J&gt;</literal>.
+    </para>
+   </section>
+   <section id="Imap_StickyPlaceHolders">
+    <title>g:Imap_StickyPlaceHolders</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     When set to 1, in visual mode, <literal>&lt;Ctrl-J&gt;</literal> takes
+     you to the next placeholder without deleting the current placeholder.
+    </para>
+   </section>
+  </section>
+  <section id="customizing-macros">
+   <title>Macro Customization</title>
+   <section id="Tex_Env_name">
+    <title>Tex_Env_name</title>
+     <para>
+      If you wish to wish to expand certain environments differently from
+      the way &ls; does it, you can define custom expansions using global
+      variables of the form <literal>Tex_Env_{name}</literal> where
+      <literal>name</literal> corresponds to the environment.
+     </para>
+     <para>
+      For example, if you press <literal>&lt;F5&gt;</literal> after typing
+      <literal>theorem</literal>, &ls; will by default expand it to
+      <programlisting>\begin{theorem}
+     \label{&ph;}&ph;
+\end{theorem}&ph;</programlisting>
+       However, if you wish change this to
+      <programlisting>\begin{theorem}
+     &ph;
+\end{theorem}&ph;</programlisting>
+       then define the following variable
+      <programlisting>let g:Tex_Env_theorem = "\\begin{theorem}\&lt;CR&gt;&ph;\&lt;CR&gt;\\end{theorem}"</programlisting>
+      </para>
+     <para>
+      If the expansion uses special keys such as carriage return etc, then
+      use double-quotes and use the <literal>"\&lt;key&gt;"</literal>
+      notation for special keys. Backslashes have to be doubled.
+     </para>
+     <para>
+      You could even use strings returned by functions as the expansion by
+      using the <link
+       linkend="IMAP_PutTextWithMovement">IMAP_PutTextWithMovement()</link>
+      function.
+     </para>
+     <para>
+      If the name of the environment contains special characters (for
+      example, the <literal>eqnarray*</literal> environment), then use the
+      following form:
+      <programlisting>let g:Tex_Env_{'eqnarray*'} = 
+        \ "\\begin{eqnarray*}\&lt;CR&gt;&ph; &amp;=&amp; &ph;\&lt;CR&gt;\\end{eqnarray*}&ph;"</programlisting>
+       This will make pressing <literal>&lt;F5&gt;</literal> after
+       <literal>eqnarray*</literal> expand to
+       <programlisting>\begin{eqnarray*}
+    &ph; &amp;=&amp; &ph;
+\end{eqnarray*}&ph;</programlisting>
+     </para>
+   </section>
+   <section id="Tex_Com_name">
+    <title>Tex_Com_name</title>
+    <para>
+     If you wish to define new expansions for fast command insertion as
+     described <link linkend="latex-command-maps">here</link>, or redefine
+     expansions from the default values in &ls;, you will need to define
+     variables of the form <literal>g:Tex_Com_{name}</literal> where
+     <literal>name</literal> is a command name. For example, with the
+     setting
+     <programlisting>let g:Tex_Com_frac = "\\frac{&ph;}{&ph;}&ph;"</programlisting>
+     pressing <literal>&lt;F7&gt;</literal> after typing
+     <literal>frac</literal> will change it to <literal>\frac{&ph;}{&ph;}&ph;</literal>
+    </para>
+    <para>
+     See <link linkend="Tex_Env_name">Tex_Env_name</link> for additional
+     details on how to create this setting in various special
+     circumstances.
+    </para>
+   </section>
+   <section id="macro-enabling">
+    <title>Enabling / disabling macros</title>
+    <para>
+     The following variables disable various parts of the macro functionality
+     of &ls;. See the links to the relevant sections to see what functionality
+     setting each of the variables to zero will take away.
+    </para>
+    <anchor id="Tex_EnvironmentMaps" />
+    <anchor id="Tex_EnvironmentMenus" />
+    <anchor id="Tex_FontMaps" />
+    <anchor id="Tex_FontMenus" />
+    <anchor id="Tex_SectionMaps" />
+    <anchor id="Tex_SectionMenus" />
+    <informaltable frame="all">
+     <tgroup cols="3">
+      <thead>
+       <row><entry>Setting</entry><entry>Link to relevant section</entry><entry>Default Value</entry></row>
+      </thead>
+      <tbody>
+       <row><entry><literal>g:Tex_EnvironmentMaps
+       </literal></entry><entry><link linkend="environment-mappings">Environment Mappings</link></entry><entry>1</entry></row>
+       <row><entry><literal>g:Tex_EnvironmentMenus</literal></entry><entry></entry><entry>1</entry></row>
+       <row><entry><literal>g:Tex_FontMaps        </literal></entry><entry><link linkend="font-maps">Font Mappings</link></entry><entry>1</entry></row>
+       <row><entry><literal>g:Tex_FontMenus       </literal></entry><entry></entry><entry>1</entry></row>
+       <row><entry><literal>g:Tex_SectionMaps     </literal></entry><entry><link linkend="section-mappings">Section Mappings</link></entry><entry>1</entry></row>
+       <row><entry><literal>g:Tex_SectionMenus    </literal></entry><entry></entry><entry>1</entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+   </section>
+   <section id="Tex_UseMenuWizard">
+    <title>g:Tex_UseMenuWizard</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>0</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     If this variable is set to 1, then when an environment is chosen from the
+     menu then for selected environments, &ls; asks a series of
+     questions on the command line and inserts a template with the
+     corresponding fields already filled in.  Setting this to zero will insert
+     a template with <link linkend="place-holders">place-holders</link>
+     marking off the places where fields need to be filled.
+    </para>
+   </section>
+   <section id="Imap_FreezeImap">
+    <title>g:Imap_FreezeImap</title>
+    <para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>Type</entry><entry>boolean</entry></row>
+        <row><entry>Default Value</entry>
+         <entry><literal>0</literal></entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+     <para>
+      This option when set to 1, temporarily freezes &ls;'s macro
+      expansion. It might be useful when you are using some other keymap
+      which is causing excessive macro expansion. Use a buffer-local
+      variable of the same name if you wish to affect just the present
+      buffer. 
+     </para>
+    </para>
+   </section>
+   <section id="Tex_CatchVisMapErrors">
+    <title>g:Tex_CatchVisMapErrors</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     With so many visual maps, its helpful to have a way of catching typing
+     errors made in visual mode. What this does is to prompt you to correct
+     your visual mode mapping if you start out with <literal><link
+       linkend="Tex_Leader">g:Tex_Leader</link></literal> and then type some
+     illegal keys. It basically maps just the <literal>g:Tex_Leader</literal>
+     character to a function.
+    </para>
+   </section>
+   <section id="Tex_Diacritics">
+    <title>g:Tex_Diacritics</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry> <entry><literal>0</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Whether or not you want to use <link
+      linkend="diacritic-mappings">diacritics</link>.
+    </para>
+   </section>
+   <section id="Tex_Leader">
+    <title>g:Tex_Leader</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>'`'</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     The mappings in &ls; are by default prefixed with the back-tick
+     character. For example, <literal>`/</literal> inserts
+     <literal>\frac{&ph;}{&ph;}&ph;</literal> etc. You can change the
+     prefix with the following setting.
+     <literal>','</literal>, <literal>'/'</literal>,
+     <literal>'`'</literal> are preferred values. <literal>''</literal> or
+     <literal>'\'</literal> will lead to a <emphasis>lot</emphasis> of
+     trouble.
+    </para>
+    <para>
+     g:Tex_Leader is also used for visual mode mappings for fonts.
+    </para>
+   </section>
+   <section id="Tex_Leader2">
+    <title>g:Tex_Leader2</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>','</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     In order to avoid clashes between the large number of visual mode macros
+     provided, the <link linkend="enclosing-env-threeletter">visual mode
+      macros for environments</link> and sections start with a character
+     different from <literal>g:Tex_Leader</literal>.
+    </para>
+   </section>
+   <section id="Tex_PromptedEnvironments">
+    <title>g:Tex_PromptedEnvironments</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry> <entry><literal>'eqnarray*,eqnarray,equation,equation*,\[,$$,align,align*'</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This string represents a comma separated list of fields corresponding to
+     environments. Pressing <literal>&lt;F5&gt;</literal> in insert-mode in
+     the body of the document asks you to choose from one of these
+     environments to insert.
+    </para>
+    <para>
+     Leaving this string empty will leave the <literal>&lt;F5&gt;</literal>
+     key unmapped
+    </para>
+   </section>
+   <section id="Tex_HotKeyMappings">
+    <title>g:Tex_HotKeyMappings</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>'eqnarray*,eqnarray,bmatrix'</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This string represents a comma separated list of environments which are
+     mapped to <literal>&lt;Shift-F-1&gt;</literal> through
+     <literal>&lt;Shift-F-4&gt;</literal>. For example, pressing
+     <literal>&lt;Shift-F-2&gt;</literal> with this setting inserts the
+     <literal>eqnarray</literal> environment.
+    </para>
+    <para>
+     Leaving this string empty will leave <literal>&lt;Shift-F-1&gt;</literal> through
+     <literal>&lt;Shift-F-4&gt;</literal> unmapped.
+    </para>
+    <note>
+     <para>
+      Only the first four fields of this list are used. The rest are silently
+      ignored.
+     </para>
+    </note>
+   </section>
+   <section id="Tex_PromptedCommands">
+    <title>g:Tex_PromptedCommands</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry> 
+        <entry>
+         <literal>'footnote,cite,pageref,label'</literal>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This string represents a comma separated list of &latex; commands
+     which &ls; uses for the <literal>&lt;F7&gt;</literal> and
+     <literal>&lt;S-F7&gt;</literal> maps as described <link
+      linkend="latex-command-maps">here</link>.
+    </para>
+    <para>
+     Leaving this string empty will leave the <literal>&lt;F7&gt;</literal>
+     key unmapped.
+    </para>
+   </section>
+   <section id="Tex_ItemStyle_environment">
+    <title>Tex_ItemStyle_environment</title>
+    <para>
+     This setting affects the style which &ls; uses to insert an
+     <literal>\item</literal> when <literal>&lt;Alt-I&gt;</literal> is
+     pressed as described <link linkend="Alt-I">here</link>. By default
+     &ls; defines styles for the following environments:
+    </para>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <thead>
+       <row>
+        <entry>Environment</entry>
+        <entry>Style</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row><entry>itemize</entry><entry>\item </entry></row>
+       <row><entry>enumerate</entry><entry>\item </entry></row>
+       <row><entry>theindex</entry><entry>\item </entry></row>
+       <row><entry>thebibliography</entry><entry>\item[&lt;+biblabel+&gt;]{&lt;+bibkey+&gt;} &lt;++&gt;</entry></row>
+       <row><entry>description</entry><entry>\item[&lt;+label+&gt;] &lt;++&gt;</entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Each style is defined by a variable of the form
+     <literal>g:Tex_ItemStyle_{envname}</literal> where
+     <literal>envname</literal> is the name of the environment for which
+     the style is defined. For example, by default
+     <programlisting>g:Tex_ItemStyle_description = '\item[&lt;+label+&gt;] &lt;++&gt;'</programlisting>
+     Redefining the style for a particular environment or defining a style
+     for an entirely new environment is simply a matter of setting the
+     value of a variable of the corresponding name.
+    </para>
+   </section>
+  </section>
+  <section id="customizing-smart-keys">
+   <title>Smart Key Customization</title>
+   <para>
+    These settings affect the smart key functionality as described <link
+     linkend="smart-keys">here</link>.
+   </para>
+   <section id="Tex_SmartKeyBS">
+    <title>g:Tex_SmartKeyBS</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Whether or not <literal>&lt;Backspace&gt;</literal> deletes diacritics.
+    </para>
+   </section>
+   <section id="Tex_SmartKeyQuote">
+    <title>g:Tex_SmartKeyQuote</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Whether or not the <link linkend="smart-keys">smart quotes</link>
+     functionality is available.
+    </para>
+    <para>
+     If enabled, the quote characters can be customized by setting the
+     following variables:
+    </para>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <thead>
+       <row>
+        <entry>Setting</entry>
+        <entry>Value</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry><literal>g:Tex_SmartQuoteOpen</literal></entry>
+        <entry><literal>"``"</literal></entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_SmartQuoteClose</literal></entry>
+        <entry><literal>"''"</literal></entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Non-English users will want to change these settings to their locale.
+     These global variables will be ignored if there are buffer-local
+     variables (with the same name), which may be set in the language specific
+     package files, such as
+     <literal>$VIM/ftplugin/latex-suite/packages/german</literal>.
+    </para>
+   </section>
+  </section>
+  <section id="customizing-latex-completion">
+   <title>Latex Completion Customization</title>
+   <para>
+    The following settings affect the <link linkend="latex-completion">
+     completion</link> functionality in &ls;.
+   </para>
+   <section id="completion-window-preferences">
+    <title>Window size settings</title>
+    <para>
+     These three settings affect the aesthetics of the completion
+     functionality.
+    </para>
+    <anchor id="Tex_ViewerCwindowHeight" />
+    <anchor id="Tex_ViewerPreviewHeight" />
+    <anchor id="Tex_ExplorerHeight" />
+    <anchor id="Tex_ImageDir" />
+    <informaltable frame="all">
+     <tgroup cols="3">
+      <thead>
+       <row>
+        <entry>Setting</entry>
+        <entry>Explanation</entry>
+        <entry>Default Value</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry><literal>g:Tex_ViewerCwindowHeight</literal></entry>
+        <entry>The height of the <literal>cwindow</literal> which displays the
+         list of <literal>\label</literal>s etc.</entry>
+        <entry>5</entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_ViewerPreviewHeight</literal></entry>
+        <entry>The height of the preview window which shows the context of a
+         <literal>\label</literal> etc.</entry>
+        <entry>10 </entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_ExplorerHeight</literal></entry>
+        <entry>The height of the explorer window which lists the files from
+         which to choose an image file.</entry>
+        <entry>10</entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_ImageDir</literal></entry>
+        <entry>The directory to scan for images</entry>
+        <entry>''</entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+   </section>
+   <section id="Tex_BIBINPUTS">
+    <title>g:Tex_BIBINPUTS</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>string</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>''</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This string describes the directories which are scanned while trying
+     to search for <literal>.bib</literal> and <literal>.bbl</literal>
+     files.  See the <link linkend="latex-completion-cite">cite completion
+      section</link> for more details.
+    </para>
+    <para>
+     This string should be set in the syntax accepted by &vim;'s native
+     <literal>'path'</literal> setting. Do not include the present
+     directory <literal>'.'</literal>. While searching for
+     <literal>bibliography</literal> files, the present directory will be
+     prepended to this variable.
+    </para>
+   </section>
+   <section id="Tex_UseSimpleLabelSearch">
+    <title>Tex_UseSimpleLabelSearch</title>
+    <para>
+     When set to 1, &ls; searches for <literal>\label</literal>s in all
+     <literal>.tex</literal> files in the directory containing the file
+     being edited when &lt;F9&gt; is pressed. See <link
+      linkend="ls-completion-ref">\ref completion</link> for details.
+    </para>
+   </section>
+   <section id="Tex_ProjectSourceFiles">
+    <title>g:Tex_ProjectSourceFiles</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>''</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This setting is meant to be initialized on a per-project basis using
+     the <link linkend="latex-master-file">&ls; master file</link> as
+     described in <link linkend="latex-project">&ls; Project</link>
+     section. It is a list of source files which are used in the project.
+     If defined, then instead of using the logic described in 
+     <link
+      linkend="Tex_UseSimpleLabelSearch">Tex_UseSimpleLabelSearch</link> to
+     search for files in which to search for <literal>\label</literal>s, we
+     simply search for <literal>\label</literal>s in this list. This
+     significantly reduces the time it takes to generate the list of
+     possible completions for large projects.
+    </para>
+    <para>
+     The list is specified as a whitespace separated list of filenames
+     relative to the location of the main file.
+    </para>
+   </section>
+   <section id="Tex_RememberCiteSearch">
+    <title>g:Tex_RememberCiteSearch</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>0</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     When this variable is non-zero, then &ls; will try to remember results
+     from the <literal>\cite</literal> completion as described in <link
+      linkend="cite-search-caching">this section</link>.
+    </para>
+   </section>
+  </section>
+  <section id="customizing-compiling">
+   <title>Compiler Customization</title>
+   <para>
+    The following settings affect &ls;'s compilation functionality
+   </para>
+   <section id="Tex_DefaultTargetFormat">
+    <title>g:Tex_DefaultTargetFormat</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>dvi</literal> for windows/*nix and
+         <literal>pdf</literal> for mac</entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Use this setting to choose the default target format. For example,
+     setting this to <literal>pdf</literal> makes &ls; compile a pdf file
+     when you press <literal>\ll</literal> and fire up the
+     <literal>pdf</literal> viewer on pressing <literal>\lv</literal>. Make
+     sure that a rules for compiling and viewing have been defined for this
+     target format as described <link
+      linkend="Tex_CompileRule_format">here</link> and <link
+      linkend="Tex_ViewRule_format">here</link>.
+    </para>
+   </section>
+   <section id="Tex_CompileRule_format">
+    <title>g:Tex_CompileRule_&lt;format&gt;</title>
+    <para>
+     Here <literal>&lt;format&gt;</literal> refers to the target format for
+     which this rule is defined. &ls; supports compiling into
+     <literal>dvi</literal>, <literal>ps</literal> and <literal>pdf</literal>
+     by default. All these rules are strings defined by default as follows:
+    </para>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row>
+        <entry><literal>g:Tex_CompileRule_dvi</literal></entry>
+        <entry><literal>'latex -interaction=nonstopmode $*'</literal></entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_CompileRule_ps</literal></entry>
+        <entry><literal>'ps2pdf $*'</literal></entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_CompileRule_pdf</literal></entry>
+        <entry><literal>'pdflatex -interaction=nonstopmode $*'</literal></entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     If you desire forward and inverse searching via &ls;, you will need to
+     change <literal>g:Tex_CompileRule_dvi</literal> to include
+     <literal>-src-specials</literal>. However, this has been known to cause
+     problems with the output file. Therefore, use this with care.
+    </para>
+   </section>
+   <section fd="Tex_FormatDependency_format">
+    <title>g:Tex_FormatDependency_&lt;format&gt;</title>
+    <para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>Type</entry><entry>string</entry></row>
+        <row><entry>Default Value</entry>
+         <entry><literal>''</literal></entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+     By default, there are no format dependencies defined. Each definition
+     is of the form above where <literal>&lt;format&gt;</literal> is a
+     string such as <literal>'dvi'</literal> etc.
+    </para>
+    <para>
+     The value of each string is a comma separated string such as 'dvi,ps'.
+     See the <link linkend="compiler-dependency">Compiler dependency</link>
+     section to see how to use/specify this setting
+    </para>
+   </section>
+   <section id="Tex_MultipleCompileFormats">
+    <title>g:Tex_MultipleCompileFormats</title>
+    <para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>Type</entry><entry>string</entry></row>
+        <row><entry>Default Value</entry>
+         <entry><literal>'dvi'</literal></entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+    </para>
+    <para>
+     This is a comma separated string of formats for which the compiler
+     needs to be called multiple times in order to get cross-references,
+     citations etc right. See the <link
+      linkend="compiling-multiple">Compiling multiple times</link> section
+     for details.
+    </para>
+   </section>
+   <section id="Tex_IgnoredWarnings">
+    <title>g:Tex_IgnoredWarnings</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>a new-line separated list of patterns as described
+          below</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     The default value of this setting is
+     <programlisting>\"Underfull\n".
+\"Overfull\n".
+\"specifier changed to\n".
+\"You have requested\n".
+\"Missing number, treated as zero.\n".
+\"There were undefined references\n"
+\"Citation %.%# undefined"</programlisting>
+     This setting defines a set of patterns which will be filtered out when
+     displaying the output from the latex compiler. This is to aid in
+     filtering out very common warnings/errors.
+    </para>
+    <note>
+     <para>
+      Remember to check the value of <link
+       linkend="Tex_IgnoreLevel"><literal>g:Tex_IgnoreLevel</literal></link>
+      when you change this setting. For example, if you append a new pattern
+      which you would like to ignore by default, increase the value of
+      <literal>g:Tex_IgnoreLevel</literal>.
+     </para>
+    </note>
+   </section>
+   <section id="Tex_IgnoreLevel">
+    <title>g:Tex_IgnoreLevel</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Integer</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>7</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This setting defines a "filter level" or an "ignore level". A value of 7
+     for instance means that any warning/error matching with any of the first
+     7 fields of <link
+      linkend="Tex_IgnoredWarnings"><literal>g:Tex_IgnoredWarnings</literal></link>
+     will be ignored. Setting this value to zero will mean that no
+     error/warning is ignored. However, even with a value of zero, &ls; will
+     filter out most of the text which a &latex; compiler typically produces.
+     Use
+     <programlisting>TCLevel strict</programlisting>
+     from within &vim; in order to see all the lines from the compiler's
+     output.
+    </para>
+   </section>
+   <section id="Tex_UseMakefile">
+    <title>Tex_UseMakefile</title>
+    <para>
+     <informaltable frame="all">
+      <tgroup cols="2">
+       <tbody>
+        <row><entry>Type</entry><entry>boolean</entry></row>
+        <row><entry>Default Value</entry>
+         <entry><literal>1</literal></entry></row>
+       </tbody>
+      </tgroup>
+     </informaltable>
+     <para>
+      When set to 1, then if a <literal>makefile</literal> or
+      <literal>Makefile</literal> is present in the current directory, then
+      &ls; sets the <literal>makeprg</literal> option to just
+      <literal>"make &lt;target&gt;"</literal>, where
+      <literal>&lt;target&gt;</literal> is the target format chosen using
+      the <literal>TCTarget</literal> or <literal>TTarget</literal>
+      commands.
+     </para>
+     <para>
+      When set to 0, then &ls; will set the <literal>makeprg</literal>
+      setting to whatever is defined by the <link
+       linkend="Tex_CompileRule_format">g:Tex_CompileRule_target</link>
+      setting.
+     </para>
+    </para>
+   </section>
+   <section id="Tex_GotoError">
+    <title>g:Tex_GotoError</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     If set to 1, then pressing <literal>\ll</literal> will take you to
+     the location of the first warning/error, otherwise you will remain in
+     the original location but the errors/warnings will be listed in the
+     preview window.
+    </para>
+   </section>
+  </section>
+  <section id="customizing-viewing">
+   <title>Viewer Customization</title>
+   <para>
+    The following settings affect how &ls; will display compiled files.
+   </para>
+   <section id="Tex_ViewRule_format">
+    <title>g:Tex_ViewRule_&lt;format&gt;</title>
+    <para>
+     Here <literal>&lt;format&gt;</literal> refers to a format such as
+     <literal>dvi</literal>, <literal>ps</literal>, etc. This variable defines
+     the program which will be called to display a file of that format.
+    </para>
+    <para>
+     By default, &ls; defines viewer programs for viewing DVI, PS and PDF
+     formats as follows:
+    </para>
+    <informaltable frame="all">
+     <tgroup cols="3">
+      <thead>
+       <row>
+        <entry></entry>
+        <entry>Windows</entry>
+        <entry>Unix</entry>
+       </row>
+      </thead>
+      <tbody>
+       <row>
+        <entry><literal>g:Tex_ViewRule_dvi</literal></entry>
+        <entry><literal>'yap -1'</literal></entry>
+        <entry><literal>'xdvi'</literal></entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_ViewRule_ps</literal></entry>
+        <entry><literal>'gsview32'</literal></entry>
+        <entry><literal>'ghostview'</literal></entry>
+       </row>
+       <row>
+        <entry><literal>g:Tex_ViewRule_pdf</literal></entry>
+        <entry><literal>'AcroRd32'</literal></entry>
+        <entry><literal>'xpdf'</literal></entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     For Macintosh systems, these strings are left empty by default. This lets
+     the system pick the program for each format. If you define these variables
+     for Mac, the system choice will be over-ridden.
+    </para>
+    <para>
+     &ls; appends <literal>file.format</literal> to the above settings
+     while calling the external programs. For example, with
+     <programlisting>let g:Tex_ViewRule_dvi = 'yap -1'</programlisting>
+     <literal>yap</literal> is called as 
+     <programlisting>!start yap -1 file.dvi</programlisting> from within
+     &vim;. (The initial <literal>start</literal> is used on
+     <literal>Windows</literal> platforms is to make <literal>yap</literal>
+     start as a separate process.) If you find the way &ls; constructs the
+     command line too restrictive, you can use the <link
+      linkend="Tex_ViewRuleComplete_format"><literal>Tex_ViewRuleComplete_format</literal></link>
+     setting for more complete control on how the command line is
+     constructed while calling the external program for viewing.
+    </para>
+    <note>
+     <para>
+      For windows, you will need to set the <literal>$PATH</literal> variable
+      to include the paths to <literal>yap</literal>,
+      <literal>AcroRd32</literal>, <literal>gsview32</literal> and any other
+      programs. See your system documentation for how to do this.
+     </para>
+    </note>
+    <note>
+     <title>Default Viewing Format</title>
+     <para>
+      To change the default format for viewing files, set the <link
+       linkend="Tex_DefaultTargetFormat">g:Tex_DefaultTargetFormat</link>
+      variable.
+     </para>
+    </note>
+   </section>
+   <section id="Tex_ViewRuleComplete_format">
+    <title>Tex_ViewRuleComplete_&lt;format&gt;</title>
+    <para>
+     Here <literal>&lt;format&gt;</literal> refers to the extension of a
+     output format such as <literal>dvi</literal>, <literal>html</literal>
+     etc.
+    </para>
+    <para>
+     <literal>Tex_ViewRuleComplete_format</literal> takes precedence over
+     <literal>Tex_ViewRule_format</literal> if both are specified. By
+     default, &ls; does not define values for
+     <literal>Tex_ViewRuleComplete_format</literal> for any
+     <literal>format</literal>. Unlike in the case of
+     <literal>Tex_ViewRule_format</literal>, &ls; does not modify
+     <literal>Tex_ViewRuleComplete_format</literal> at all in constructing
+     the command line. The only modification is to substitute
+     <literal>'$*'</literal> everywhere in the string with the name of the
+     file being viewed (without the extension).
+    </para>
+    <note>
+     <title>IMPORTANT</title>
+     <para>
+      Make sure you make the process go into the background otherwise vim
+      will wait for the viewer to terminate before letting you edit the file
+      again.
+     </para>
+     <para>
+      To make a process go into the background on a <literal>*nix</literal>
+      platform, use a trailing <literal>&amp;</literal> in the setting. On
+      <literal>Windows</literal>, use <literal>start</literal> at the
+      beginning of the setting. Example: Suppose you have a latex->html
+      converter which converts a file say foo.tex to a file foo/index.html.
+      Then you would use:
+      <programlisting>" On *nix platform
+let g:Tex_ViewRuleComplete_html = 'MozillaFirebird $*/index.html &amp;'
+" On windows platform
+let g:Tex_ViewRuleComplete_html = 'start MozillaFirebird $*/index.html'</programlisting>
+     </para>
+    </note>
+   </section>
+  </section>
+  <section id="customizing-menus">
+   <title>Menu Customization</title>
+   <para>
+    In addition to using the variables defined in this section to affect
+    the menu-layout permanently (i.e, the layout &ls; will start with), you
+    can also use the <literal>TeX-Suite > Configure Menu</literal> menu to
+    dynamically configure the menu layout after &ls; has started.
+   </para>
+   <section id="Tex_Menus">
+    <title>g:Tex_Menus</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     If set to 0, &ls; will suppress showing all menus. Useful if you mostly
+     work in terminals.
+    </para>
+   </section>
+   <section id="Tex_MainMenuLocation">
+    <title><literal>g:Tex_MainMenuLocation</literal></title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>number</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>80</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This setting decides the location of the first top-level &ls;
+     menu. You can for example shift all the menus created by &ls;
+     to the very end by setting this value to a large number like 990.
+    </para>
+   </section>
+   <section id="Tex_MathMenus">
+    <title>g:Tex_MathMenus</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     The <literal>Tex-Math</literal> menu consists of hundreds of mathematical
+     symbols used in &latex;. This menu comprises about 75% of the menus.
+    </para>
+   </section>
+   <section id="Tex_NestElementMenus">
+    <title>g:Tex_NestElementMenus</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This setting controls the "compactness" of the menus. If set to 1, then the
+     Font, Counter and Dimensioning menus are collected together in a single
+     menu called <literal>Tex-Elements</literal>, otherwise, they will each get
+     a separate menu.
+    </para>
+   </section>
+   <section id="Tex_PackagesMenu">
+    <title>g:Tex_PackagesMenu</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Setting this to zero will stop &ls; from automatically creating the
+     <literal>TeX-Suite > Packages > Supported</literal> menu at startup. You
+     can still create the menu after startup by going to
+     <literal>TeX-Suite > Configure Menu</literal>.
+    </para>
+   </section>
+   <section id="Tex_NestPackagesMenu">
+    <title>g:Tex_NestPackagesMenu</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>String</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>'TeX-'</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This string is the prefix added to all the menus created by &ls;. If you
+     define this variable with a dot (<literal>'.'</literal>) as the last
+     character, then all the menus created by &ls; will be nested under a
+     single master menu. For example, set this to
+     <literal>'&amp;LaTeX-Suite.'</literal> to nest all menus under a menu
+     called <literal>&amp;LaTeX-Suite</literal>.
+    </para>
+   </section>
+   <section id="Tex_UseUtfMenus">
+    <title>g:Tex_UseUtfMenus</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>0</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This setting controls whether &ls; uses utf-8 symbols to display some of
+     the mathematical symbols in the <literal>TeX-Math</literal> menu. It is
+     necessary for your system/GUI to support utf-8. Setting this to 1 has the
+     side-effect of setting the <literal>'encoding'</literal> option of &vim;
+     to 'utf-8'.
+    </para>
+   </section>
+  </section>
+  <section id="customizing-folding">
+   <title>Folding Customization</title>
+   <para>
+    The following settings control the <link
+     linkend="latex-folding">folding</link> functionality of &ls;.
+   </para>
+   <section id="Tex_Folding">
+    <title>g:Tex_Folding</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     Setting this to zero completely disables &ls;'s folding functionality.
+     However, the <literal>TexFoldTextFunction()</literal> is still available
+     in case you want to use another folding scheme but still want to continue
+     using the fold text function.
+    </para>
+   </section>
+   <section id="Tex_AutoFolding">
+    <title>g:Tex_AutoFolding</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>Boolean</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>1</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This setting controls whether &ls; automatically creates manual folds for
+     a file when it is opened. You can still use the <literal>\rf</literal>
+     mapping to refresh/create folds even when this variable is set to zero.
+    </para>
+   </section>
+  </section>
+  <section id="customizing-packages">
+   <title>Package Handling Customization</title>
+   <para> 
+    These settings affect the <link linkend="custom-packages">custom
+     packages</link> functionality in &ls;
+   </para>
+   <section id="Tex_TEXINPUTS">
+    <title>g:Tex_TEXINPUTS</title>
+    <informaltable frame="all">
+     <tgroup cols="2">
+      <tbody>
+       <row><entry>Type</entry><entry>string</entry></row>
+       <row><entry>Default Value</entry>
+        <entry><literal>''</literal></entry></row>
+      </tbody>
+     </tgroup>
+    </informaltable>
+    <para>
+     This setting describes the directories scanned by &ls; while searching
+     for custom user packages as described in the <link
+      linkend="custom-packages">custom packages</link> section. Do not
+     include the present directory in this setting. The present directory
+     is always scanned for custom packages.
+    </para>
+    <para>
+     This string should be set in the syntax accepted by &vim;'s native
+     <literal>'path'</literal> setting.
+    </para>
+   </section>
+  </section>
+ </section>
+ <section id="latex-suite-credits">
+  <title>Credits</title>
+  <para>
+   And finally, the credits:
+  </para>
+  <informaltable frame="none">
+   <tgroup cols="2">
+    <tbody>
+     <row>
+      <entry>Artur R. Czechowski</entry>
+      <entry>maintains the BSD package of &ls;. Lots of valuable
+       feedback.</entry>
+     </row>
+     <row>
+      <entry>
+       Lubomir Host      
+      </entry>
+      <entry>
+       provided the diacritics and also helped in development.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Alexander Wagner  
+      </entry>
+      <entry>
+       valuable suggestions during development.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Luc Hermitte      
+      </entry>
+      <entry>
+       his variation of Stephen Riehm's bracketing system is used
+       in &ls;.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Gergely Kontra    
+      </entry>
+      <entry>
+       the clever little JumpFunc() in imaps.vim is due to him.
+       The implementation of the templates also borrows from
+       mu-template.vim by him.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Dimitri Antoniou  
+      </entry>
+      <entry>
+       author of ltags and also provided the nice tip about
+       forward / reverse search on DVI documents.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Stephen Riehm     
+      </entry>
+      <entry>
+       the extremely helpful bracketing system is from him.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Alan Schmitt      
+      </entry>
+      <entry>
+       provided macros/folding elements. Continued feedback,
+       bug-reports/fixes.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Hari Krishna Dara 
+      </entry>
+      <entry>
+       for ExecMap(), the clever little function which makes
+       typing visual mode mappings so much easier and error-free.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Alan G Isac       
+      </entry>
+      <entry>
+       for the comprehensive BibT() function for entering bibtex
+       entries.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Gontran Baerts    
+      </entry>
+      <entry>
+       for libList.vim
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Peter Heslin      
+      </entry>
+      <entry>
+       useful discussion and also a lot of bug fixes.
+       the %%fakesection in folding.vim.
+       
+      </entry>
+     </row>
+     <row>
+      <entry>
+       Zhang Lin-bo
+      </entry>
+      <entry>
+       lots of very useful additions to folding. The code for customizing
+       the folding scheme is due to him.
+      </entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </informaltable>
+  <para>
+   A large number of functions in &ls; come from various other people.
+   Some of those people might have been missed here. Each function should however
+   have the author's name/e-mail above it. Thats the more authoritative place to
+   check out who has done what.
+  </para>
+  <anchor id="latex-suite-maintainer"></anchor>
+  <para>
+   The current maintainer(s) of &ls; is(are)
+  </para>
+  <simplelist>
+   <member>Srinath Avadhanula &lt;srinath@fastmail.fm&gt;</member>
+   <member>Mikolaj Machowski &lt;mikmach@wp.pl&gt;</member>
+   <member>Benji Fisher &lt;benji@member.AMS.org&gt;</member>
+  </simplelist>
+ </section>
+</article>
+
+<!--
+vim: et:sw=1:sts=4
+-->
