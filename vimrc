@@ -195,6 +195,10 @@ map <C-t><C-w> :tabclose<CR>
 " ,/ turn off search highlighting
 nmap <leader>/ :nohl<CR>      
 
+" Bash like keys for the command line
+cnoremap <C-A>      <Home>
+cnoremap <C-E>      <End>
+cnoremap <C-K>      <C-U>
 
 " ,p toggles paste mode {
 nmap <leader>p :call TogglePaste()<CR>
