@@ -41,7 +41,8 @@ set hlsearch		" search highlighting
 if has("gui_running")	" GUI color and font settings
   set guifont=Monaco:h16
   set background=dark 
-  set t_Co=256
+  set t_Co=256          " 256 color mode
+  set cursorline        " highlight current line
   colors moria
 else
 " terminal color settings
@@ -100,6 +101,7 @@ function! HasPaste()
 endfunction
 
 "}
+
 
 
 autocmd FileType c,cpp,cc  set cindent comments=sr:/*,mb:*,el:*/,:// cino=>s,e0,n0,f0,{0,}0,^-1s,:0,=s,g0,h1s,p2,t0,+2,(2,)20,*30
@@ -260,3 +262,4 @@ if !has("gui_running")
    nmap OC l
    nmap OD h
 endif
+
