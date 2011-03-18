@@ -1,3 +1,4 @@
 #!/bin/sh
-ln -s vimrc ../.vimrc
-ln -s gvimrc ../.gvimrc
+cd ..
+ln -s .vim/vimrc .vimrc
+ln -s .vim/gvimrc .gvimrc
