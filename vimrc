@@ -79,6 +79,7 @@ filetype plugin on    " Enable filetype-specific plugins
 
 " many plugins use hotkeys that starts with <leader>
 let mapleader=","
+let g:mapleader=","
 
 " auto reload vimrc when editing it
 autocmd! bufwritepost .vimrc source ~/.vimrc
@@ -152,7 +153,7 @@ endfunction
 "}
 
 
-
+" C/C++ specific settings
 autocmd FileType c,cpp,cc  set cindent comments=sr:/*,mb:*,el:*/,:// cino=>s,e0,n0,f0,{0,}0,^-1s,:0,=s,g0,h1s,p2,t0,+2,(2,)20,*30
 
 "Restore cursor to file position in previous editing session
@@ -172,23 +173,35 @@ endfun
 "--------------------------------------------------------------------------- 
 " USEFUL SHORTCUTS
 "--------------------------------------------------------------------------- 
-map <leader>r :call Replace()<CR>   "replace the current word in all opened buffers
+"replace the current word in all opened buffers
+map <leader>r :call Replace()<CR>
 
-map <leader>] <ESC>:cn<CR>    " move to next error
-map <leader>[ <ESC>:cp<CR>    " move to the prev error
+" open the error console
+map <leader>cc :botright cope<CR> 
+" move to next error
+map <leader>] :cn<CR>
+" move to the prev error
+map <leader>[ :cp<CR>
 
-" move around splits
-map <C-J> <C-W>j<C-W>_        " move to and maximize the below split 
-map <C-K> <C-W>k<C-W>_        " move to and maximize the above split 
-nmap <c-h> <c-w>h<c-w><bar>   " move to and maximize the left split 
-nmap <c-l> <c-w>l<c-w><bar>   " move to and maximize the right split  
+" --- move around splits {
+" move to and maximize the below split 
+map <C-J> <C-W>j<C-W>_
+" move to and maximize the above split 
+map <C-K> <C-W>k<C-W>_
+" move to and maximize the left split 
+nmap <c-h> <c-w>h<c-w><bar>
+" move to and maximize the right split  
+nmap <c-l> <c-w>l<c-w><bar>
 set wmw=0                     " set the min width of a window to 0 so we can maximize others 
 set wmh=0                     " set the min height of a window to 0 so we can maximize others
+" }
 
 " move around tabs. conflict with the original screen top/bottom
 " comment them out if you want the original H/L
-map <S-H> gT                  " go to prev tab 
-map <S-L> gt                  " go to next tab
+" go to prev tab 
+map <S-H> gT
+" go to next tab
+map <S-L> gt
 
 " new tab
 map <C-t><C-t> :tabnew<CR>
@@ -196,7 +209,7 @@ map <C-t><C-t> :tabnew<CR>
 map <C-t><C-w> :tabclose<CR> 
 
 " ,/ turn off search highlighting
-nmap <leader>/ :nohl<CR>      
+nmap <leader>/ :nohl<CR>
 
 " Bash like keys for the command line
 cnoremap <C-A>      <Home>
