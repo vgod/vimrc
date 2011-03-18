@@ -1,7 +1,35 @@
 " vgod's vimrc
 " https://github.com/vgod/vimrc
 "
+" HOW TO INSTALL
+" ==============
+" 0. Check out from github
+"    $ git clone https://github.com/vgod/vimrc ~/.vim
+"    $ cd ~/.vim
+"    $ git submodule update --init
+" 1. Install ~/.vimrc and ~/.gvimrc
+"    $ ./install-vimrc.sh
+" 2. Compile the Command-T plugin
+"    $ cd .vim/bundle/command-t/ruby/command-t
+"    $ ruby extconf.rb
+"    $ make
+"    
+" UPGRADE PLUGIN BUNDLES
+" ======================
+" If a plugin was checked out as a git submodule, you can upgrade the plugin
+" with git pull. For example, 
+" $ cd ~/.vim/bundle/command-t
+" $ git pull
+"
+" HOW TO USE
+" ==========
 " see the "USEFUL SHORTCUTS" section to learn my shortcuts
+"
+" vim-surround: deal with pairs of surroundings.
+"   https://github.com/tpope/vim-surround/blob/master/doc/surround.txt 
+"
+" Command-T: open and navigate between files with cmd-t
+"   https://github.com/wincent/Command-T
 "
 " Language specific supports:
 " Latex: vim-latex
@@ -262,4 +290,6 @@ if !has("gui_running")
    nmap OC l
    nmap OD h
 endif
+
+
 
