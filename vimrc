@@ -2,7 +2,7 @@
 " Tsung-Hsiang (Sean) Chang <vgod@vgod.tw>
 " Fork me on GITHUB  https://github.com/vgod/vimrc
 
-" read https://github.com/vgod/vimrc/blob/master/README for more info
+" read https://github.com/vgod/vimrc/blob/master/README.md for more info
 
 
 " For pathogen.vim: auto load all plugins in .vim/bundle

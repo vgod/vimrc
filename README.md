@@ -27,7 +27,7 @@ UPGRADE PLUGIN BUNDLES
 ----------------------
 
 If a plugin was checked out as a git submodule, you can upgrade the plugin
-with git pull. For example, 
+with git pull. For example, to upgrade Command-T 
 
      $ cd ~/.vim/bundle/command-t
      $ git pull
@@ -37,7 +37,7 @@ HOW TO USE
 
 see the "USEFUL SHORTCUTS" section in vimrc to learn my shortcuts.
 
-Plugins
+PLUGINS
 -------
 
 * [vim-surround](https://github.com/tpope/vim-surround/blob/master/doc/surround.txt): deal with pairs of surroundings.
