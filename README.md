@@ -26,8 +26,8 @@ HOW TO INSTALL
 UPGRADE PLUGIN BUNDLES
 ----------------------
 
-If a plugin was checked out as a git submodule, you can upgrade the plugin
-with git pull. For example, to upgrade Command-T 
+All plugins (except vim-latex) were checked out as git submodules, 
+which can be upgraded with `git pull`. For example, to upgrade Command-T 
 
      $ cd ~/.vim/bundle/command-t
      $ git pull
