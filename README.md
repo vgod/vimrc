@@ -9,19 +9,19 @@ HOW TO INSTALL
 
 1. Check out from github
 
-     $ git clone https://github.com/vgod/vimrc ~/.vim
-     $ cd ~/.vim
-     $ git submodule update --init
+        $ git clone https://github.com/vgod/vimrc ~/.vim
+        $ cd ~/.vim
+        $ git submodule update --init
 
 2. Install ~/.vimrc and ~/.gvimrc
 
-     $ ./install-vimrc.sh
+        $ ./install-vimrc.sh
 
-3. Compile the Command-T plugin
+3. (Optional, if you want Command-T) Compile the Command-T plugin
 
-     $ cd .vim/bundle/command-t/ruby/command-t
-     $ ruby extconf.rb
-     $ make
+        $ cd .vim/bundle/command-t/ruby/command-t
+        $ ruby extconf.rb
+        $ make
   
 UPGRADE PLUGIN BUNDLES
 ----------------------
@@ -43,7 +43,7 @@ Plugins
 * [vim-surround](https://github.com/tpope/vim-surround/blob/master/doc/surround.txt): deal with pairs of surroundings.
    
 
-* [Command-T](https://github.com/wincent/Command-T): open and navigate between files with cmd-t.
+* [Command-T](https://github.com/wincent/Command-T): open and navigate between files with `cmd-t`.
   
 * [snipMate](http://www.vim.org/scripts/script.php?script_id=2540): TextMate-style snippets for Vim
 
