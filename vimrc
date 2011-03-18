@@ -62,7 +62,6 @@ set ignorecase		" ignore case when searching
 set smartcase		" ignore case if search pattern is all lowercase,case-sensitive otherwise
 set smarttab		" insert tabs on the start of a line according to context
 
-
 " TAB setting{
    set expandtab        "replace <TAB> with spaces
    set softtabstop=3 
@@ -93,10 +92,6 @@ endfunction
 
 "}
 
-
-"----------------------------------------------------------------------
-"some useful commands and plugins
-"----------------------------------------------------------------------
 
 
 "Restore cursor to file position in previous editing session
@@ -162,7 +157,7 @@ vnoremap > >gv
 cmap cd. lcd %:p:h
 
 "--------------------------------------------------------------------------- 
-" programming shortcuts
+" PROGRAMMING SHORTCUTS
 "--------------------------------------------------------------------------- 
 
 " Ctrl-[ jump out of the tag stack (undo Ctrl-])
@@ -179,9 +174,8 @@ fun! IncludeGuard()
 endfun
 
 
-
 "--------------------------------------------------------------------------- 
-"encoding settings
+" ENCODING SETTINGS
 "--------------------------------------------------------------------------- 
 set encoding=utf-8                                  
 set termencoding=utf-8
@@ -207,10 +201,10 @@ endfun
 
 
 "--------------------------------------------------------------------------- 
-" plugin settings
+" PLUGIN SETTINGS
 "--------------------------------------------------------------------------- 
 
-" ------- vim-latex {
+" ------- vim-latex - many latex shortcuts and snippets {
 
 " IMPORTANT: win32 users will need to have 'shellslash' set so that latex
 " can be called correctly.
@@ -224,3 +218,17 @@ let g:tex_flavor='latex'
 "}
 
 
+" --- AutoClose - Inserts matching bracket, paren, brace or quote 
+" fixed the arrow key problems caused by AutoClose
+if !has("gui_running")	
+   set term=linux
+   imap OA <ESC>ki
+   imap OB <ESC>ji
+   imap OC <ESC>li
+   imap OD <ESC>hi
+
+   nmap OA k
+   nmap OB j
+   nmap OC l
+   nmap OD h
+endif

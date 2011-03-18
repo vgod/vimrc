@@ -1,0 +1,9 @@
+[submodule "bundle/vim-latex"]
+	path = bundle/vim-latex
+	url = git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex/
+[submodule "bundle/smart-parentheses"]
+	path = bundle/smart-parentheses
+	url = https://github.com/vim-scripts/Smart-Parentheses.git
+[submodule "bundle/autoclose"]
+	path = bundle/autoclose
+	url = https://github.com/Townk/vim-autoclose.git
