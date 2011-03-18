@@ -40,6 +40,10 @@ see the "USEFUL SHORTCUTS" section in vimrc to learn my shortcuts.
 PLUGINS
 -------
 
+* [vim-latex](http://vim-latex.sourceforge.net/): Latex support.
+
+* [AutoClose](http://www.vim.org/scripts/script.php?script_id=1849):  Inserts matching bracket, paren, brace or quote.
+
 * [vim-surround](https://github.com/tpope/vim-surround/blob/master/doc/surround.txt): deal with pairs of surroundings.
    
 
