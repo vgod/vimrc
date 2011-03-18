@@ -9,19 +9,19 @@ HOW TO INSTALL
 
 1. Check out from github
 
-   $ git clone https://github.com/vgod/vimrc ~/.vim
-   $ cd ~/.vim
-   $ git submodule update --init
+      $ git clone https://github.com/vgod/vimrc ~/.vim
+      $ cd ~/.vim
+      $ git submodule update --init
 
 2. Install ~/.vimrc and ~/.gvimrc
 
-   $ ./install-vimrc.sh
+      $ ./install-vimrc.sh
 
 3. Compile the Command-T plugin
 
-   $ cd .vim/bundle/command-t/ruby/command-t
-   $ ruby extconf.rb
-   $ make
+      $ cd .vim/bundle/command-t/ruby/command-t
+      $ ruby extconf.rb
+      $ make
   
 UPGRADE PLUGIN BUNDLES
 ----------------------
@@ -58,16 +58,16 @@ Plugins
   
 * [Cute Error Marker](http://www.vim.org/scripts/script.php?script_id=2653): showing error and warning icons on line.
   
-Note: MacVim users need to enable "Use experimental renderer" to see
-graphical icons.
+   Note: MacVim users need to enable "Use experimental renderer" to see
+   graphical icons.
 
 
 Language specific supports
 --------------------------
 
 * Latex: vim-latex
-* Restructured Text: ctrl-u 1~5 inserts Part/Chapter/Section headers
-* CSS: ctrl-x ctrl-o to do omnicompletion 
+* Restructured Text: `ctrl-u 1~5` inserts Part/Chapter/Section headers
+* CSS: `ctrl-x ctrl-o` to do omnicompletion 
 
 Other good references
 ---------------------
