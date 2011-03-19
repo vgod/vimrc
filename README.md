@@ -74,9 +74,10 @@ PLUGINS
 Language specific supports
 --------------------------
 
-* Latex: vim-latex
+* Latex: Read `:help latex-suite.txt`
 * Restructured Text: `ctrl-u 1~5` inserts Part/Chapter/Section headers
 * CSS: `ctrl-x ctrl-o` to do omnicompletion 
+* HTML/XML: End tags are automatically completed after typing a begin tag. (Typing > twice pushes the end tag to a new line.)
 
 Other good references
 ---------------------
