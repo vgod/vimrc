@@ -54,6 +54,8 @@ PLUGINS
 
 * [Command-T](https://github.com/wincent/Command-T): open and navigate between files with `cmd-t`.
   
+* [SuperTab](http://www.vim.org/scripts/script.php?script_id=1643): Do all your insert-mode completion with Tab.
+
 * [snipMate](http://www.vim.org/scripts/script.php?script_id=2540): TextMate-style snippets for Vim
 
   `:help snipMate` to see more info.
@@ -63,7 +65,6 @@ PLUGINS
   `:help yankring` to see more info.
 
 * [VisIncr](http://www.vim.org/scripts/script.php?script_id=670): Produce increasing/decreasing columns of numbers, dates, or daynames.
-  
   
 * [Cute Error Marker](http://www.vim.org/scripts/script.php?script_id=2653): showing error and warning icons on line.
   
