@@ -222,6 +222,12 @@ autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd BufNewFile,BufRead *.scss             set ft=scss.css
 autocmd BufNewFile,BufRead *.sass             set ft=sass.css
 
+" Enable omni completion.
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
 
 "--------------------------------------------------------------------------- 
 " ENCODING SETTINGS
@@ -286,3 +292,4 @@ endif
 
 " --- Command-T
 let g:CommandTMaxHeight = 15
+
