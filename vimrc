@@ -216,18 +216,18 @@ fun! IncludeGuard()
 endfun
 
 
-" ctrl-x ctrl-o to do CSS completion 
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-" make this work for SASS and SCSS
-autocmd BufNewFile,BufRead *.scss             set ft=scss.css
-autocmd BufNewFile,BufRead *.sass             set ft=sass.css
 
-" Enable omni completion.
+" Enable omni completion. (Ctrl-X Ctrl-O)
+set ofu=syntaxcomplete#Complete
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
+" make CSS omnicompletion work for SASS and SCSS
+autocmd BufNewFile,BufRead *.scss             set ft=scss.css
+autocmd BufNewFile,BufRead *.sass             set ft=sass.css
 
 "--------------------------------------------------------------------------- 
 " ENCODING SETTINGS
@@ -292,4 +292,7 @@ endif
 
 " --- Command-T
 let g:CommandTMaxHeight = 15
+
+" --- SuperTab
+let g:SuperTabDefaultCompletionType = "context"
 
