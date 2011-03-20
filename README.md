@@ -42,8 +42,6 @@ PLUGINS
 
 * [Pathogen](http://www.vim.org/scripts/script.php?script_id=2332): Pathogen let us install a plugin as a bundle in ~/.vim/bundle seprately.
 
-* [vim-latex](http://vim-latex.sourceforge.net/): Latex support.
-
 * [AutoClose](http://www.vim.org/scripts/script.php?script_id=1849):  Inserts matching bracket, paren, brace or quote.
 
 * [vim-surround](https://github.com/tpope/vim-surround/blob/master/doc/surround.txt): deal with pairs of surroundings.
@@ -70,6 +68,12 @@ PLUGINS
   
    Note: MacVim users need to enable "Use experimental renderer" to see
    graphical icons.
+
+* [vim-latex](http://vim-latex.sourceforge.net/): Latex support.
+
+* [OmniCppComplete](http://www.vim.org/scripts/script.php?script_id=1520): C/C++ omni-completion with ctags database.
+
+* [JavaComplete](http://www.vim.org/scripts/script.php?script_id=1785): Java Omni-completion.
 
 
 Language specific supports

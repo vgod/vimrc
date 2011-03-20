@@ -218,7 +218,6 @@ endfun
 
 
 " Enable omni completion. (Ctrl-X Ctrl-O)
-set ofu=syntaxcomplete#Complete
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
@@ -226,6 +225,15 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType c set omnifunc=ccomplete#Complete
 autocmd FileType java set omnifunc=javacomplete#Complete
+
+" use syntax complete if nothing else available
+if has("autocmd") && exists("+omnifunc")
+  autocmd Filetype *
+              \	if &omnifunc == "" |
+              \		setlocal omnifunc=syntaxcomplete#Complete |
+              \	endif
+endif
+
 
 " make CSS omnicompletion work for SASS and SCSS
 autocmd BufNewFile,BufRead *.scss             set ft=scss.css
