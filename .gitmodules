@@ -43,3 +43,6 @@
 [submodule "bundle/scala-vim-support"]
 	path = bundle/scala-vim-support
 	url = https://github.com/rosstimson/scala-vim-support.git
+[submodule "bundle/nerdtree"]
+	path = bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree.git
