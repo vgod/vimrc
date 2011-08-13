@@ -13,7 +13,7 @@ Use curl (for Mac OS X):
 
 or wget (for most UNIX platforms):
 
-     wget -O - https://github.com/vgod/vimrc/raw/master/auto-install.sh | sh
+     wget -O - https://raw.github.com/vgod/vimrc/master/auto-install.sh | sh
 
 
 MANUALLY INSTALL
