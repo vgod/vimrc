@@ -9,28 +9,32 @@ HOW TO INSTALL
 
 1. Check out from github
 
-        $ git clone https://github.com/vgod/vimrc ~/.vim
-        $ cd ~/.vim
-        $ git submodule update --init
+        git clone https://github.com/vgod/vimrc ~/.vim
+        cd ~/.vim
+        git submodule update --init
 
 2. Install ~/.vimrc and ~/.gvimrc
 
-        $ ./install-vimrc.sh
+        ./install-vimrc.sh
 
 3. (Optional, if you want Command-T) Compile the Command-T plugin
 
-        $ cd .vim/bundle/command-t/ruby/command-t
-        $ ruby extconf.rb
-        $ make
+        cd .vim/bundle/command-t/ruby/command-t
+        ruby extconf.rb
+        make
   
-UPGRADE PLUGIN BUNDLES
-----------------------
+INSTALL & UPGRADE PLUGIN BUNDLES
+--------------------------------
 
 All plugins (except vim-latex) were checked out as git submodules, 
 which can be upgraded with `git pull`. For example, to upgrade Command-T 
 
-     $ cd ~/.vim/bundle/command-t
-     $ git pull
+     cd ~/.vim/bundle/command-t
+     git pull
+
+To install a new plugin as a git submoudle, type
+
+     git submodule add [GIT-REPOSITORY-URL] bundle/[PLUGIN-NAME]
 
 HOW TO USE
 ----------
@@ -81,6 +85,7 @@ PLUGINS
 
 * [JavaComplete](http://www.vim.org/scripts/script.php?script_id=1785): Java Omni-completion.
 
+* [EasyMotion](https://github.com/Lokaltog/vim-easymotion): An easy way to jump to a word.
 
 Language specific supports
 --------------------------
