@@ -4,8 +4,20 @@ Author: Tsung-Hsiang (Sean) Chang <vgod@vgod.tw>
 
 Fork me on GITHUB  https://github.com/vgod/vimrc.
 
-HOW TO INSTALL
---------------
+ONE-STEP INSTALL
+----------------
+
+Use curl (for Mac OS X):
+
+     curl -o - https://raw.github.com/vgod/vimrc/master/auto-install.sh | sh
+
+or wget (for most UNIX platforms):
+
+     wget -O - https://github.com/vgod/vimrc/raw/master/auto-install.sh | sh
+
+
+MANUALLY INSTALL
+----------------
 
 1. Check out from github
 
