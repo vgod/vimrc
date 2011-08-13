@@ -32,8 +32,9 @@ which can be upgraded with `git pull`. For example, to upgrade Command-T
      cd ~/.vim/bundle/command-t
      git pull
 
-To install a new plugin as a git submoudle, type
+To install a new plugin as a git submoudle, type the followin commands.
 
+     cd ~/.vim
      git submodule add [GIT-REPOSITORY-URL] bundle/[PLUGIN-NAME]
 
 HOW TO USE
