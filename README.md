@@ -78,6 +78,7 @@ PLUGINS
 * [Nerd Tree](http://www.vim.org/scripts/script.php?script_id=1658): A tree explorer plugin for navigating the filesystem.
 
   Useful commands:
+
   * `:Bookmark [name]` - bookmark any directory as name
   * `:NERDTree [name]` - open the bookmark [name] in Nerd Tree
 
@@ -105,7 +106,7 @@ PLUGINS
   
 * [Cute Error Marker](http://www.vim.org/scripts/script.php?script_id=2653): showing error and warning icons on line.
   
-   Note: MacVim users need to enable "Use experimental renderer" to see
+   MacVim users need to enable "Use experimental renderer" to see
    graphical icons.
 
 * [vim-latex](http://vim-latex.sourceforge.net/): Latex support.
@@ -117,12 +118,14 @@ PLUGINS
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion): An easy way to jump to a word.
 
   Useful commands:
+
   * `,w` forward EasyMotion
   * `,b` backward EasyMotion
 
 * [TagBar](http://majutsushi.github.com/tagbar/): browsing the tags of source files ordered by classes.
 
   Useful commands:
+
   * `F7` toggles the TagBar
 
 Language specific supports
