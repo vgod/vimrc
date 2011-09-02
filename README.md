@@ -116,6 +116,15 @@ PLUGINS
 
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion): An easy way to jump to a word.
 
+  Useful commands:
+  * `,w` forward EasyMotion
+  * `,b` backward EasyMotion
+
+* [TagBar](http://majutsushi.github.com/tagbar/): browsing the tags of source files ordered by classes.
+
+  Useful commands:
+  * `F7` toggles the TagBar
+
 Language specific supports
 --------------------------
 

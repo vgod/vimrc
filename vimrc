@@ -300,4 +300,14 @@ let g:SuperTabDefaultCompletionType = "context"
 
 " --- EasyMotion
 "let g:EasyMotion_leader_key = '<Leader>m' " default is <Leader>w
+hi link EasyMotionTarget ErrorMsg
+hi link EasyMotionShade  Comment
+
+
+" --- TagBar
+" toggle TagBar with F7
+nnoremap <silent> <F7> :TagbarToggle<CR> 
+" set focus to TagBar when opening it
+let g:tagbar_autofocus = 1
+
 
