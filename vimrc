@@ -226,6 +226,7 @@ if has("autocmd") && exists("+omnifunc")
               \	endif
 endif
 
+set cot-=preview "disable doc preview in omnicomplete
 
 " make CSS omnicompletion work for SASS and SCSS
 autocmd BufNewFile,BufRead *.scss             set ft=scss.css
