@@ -60,7 +60,7 @@ which can be upgraded with `git pull`. For example, to upgrade Command-T
      cd ~/.vim/bundle/command-t
      git pull
 
-To install a new plugin as a git submoudle, type the followin commands.
+To install a new plugin as a git submoudle, type the following commands.
 
      cd ~/.vim
      git submodule add [GIT-REPOSITORY-URL] bundle/[PLUGIN-NAME]
@@ -78,8 +78,8 @@ PLUGINS
 * [Nerd Tree](http://www.vim.org/scripts/script.php?script_id=1658): A tree explorer plugin for navigating the filesystem.
 
   Useful commands:
-    * `:Bookmark [name]` - bookmark any directory as name
-    * `:NERDTree [name]` - open the bookmark [name] in Nerd Tree
+    1. `:Bookmark [name]` - bookmark any directory as name
+    1. `:NERDTree [name]` - open the bookmark [name] in Nerd Tree
 
 * [AutoClose](http://www.vim.org/scripts/script.php?script_id=1849):  Inserts matching bracket, paren, brace or quote.
 
@@ -117,13 +117,13 @@ PLUGINS
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion): An easy way to jump to a word.
 
   Useful commands:
-    * `,,w` forward EasyMotion
-    * `,,b` backward EasyMotion
+    1. `,,w` forward EasyMotion
+    1. `,,b` backward EasyMotion
 
 * [TagBar](http://majutsushi.github.com/tagbar/): browsing the tags of source files ordered by classes.
 
   Useful commands:
-    * `F7` toggles the TagBar
+    1. `F7` toggles the TagBar
 
 Language specific supports
 --------------------------
