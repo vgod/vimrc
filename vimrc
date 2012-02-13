@@ -6,6 +6,12 @@
 
 
 " For pathogen.vim: auto load all plugins in .vim/bundle
+
+let g:pathogen_disabled = []
+if !has('gui_running')
+   call add(g:pathogen_disabled, 'powerline')
+endif
+
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
@@ -263,6 +269,7 @@ endfun
 " PLUGIN SETTINGS
 "--------------------------------------------------------------------------- 
 
+
 " ------- vim-latex - many latex shortcuts and snippets {
 
 " IMPORTANT: win32 users will need to have 'shellslash' set so that latex
@@ -314,4 +321,3 @@ let g:tagbar_autofocus = 1
 
 " --- PowerLine
 " let g:Powerline_symbols = 'fancy' " require fontpatcher
-
