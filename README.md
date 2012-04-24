@@ -125,6 +125,12 @@ PLUGINS
   Useful commands:    
     `F7` toggles the TagBar
 
+* [Indent Motion](https://github.com/vim-scripts/indent-motion): Vim motions to the start and end of the current indentation-delimited block 
+
+  Useful commands:    
+    `,]` move to the end of the current indentation-delimited block (very useful in Python)
+    `,[` move to the beginning of the current indentation-delimited block (very useful in Python)
+
 Language specific supports
 --------------------------
 
