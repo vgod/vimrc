@@ -131,6 +131,11 @@ PLUGINS
     `,]` move to the end of the current indentation-delimited block (very useful in Python)   
     `,[` move to the beginning of the current indentation-delimited block (very useful in Python)   
 
+* [Zen Coding](https://github.com/mattn/zencoding-vim): expanding abbreviation like zen-coding.
+
+  Useful commands:   
+    `<ctrl-y>,` expand zen-coding abbreviation.
+
 Language specific supports
 --------------------------
 
