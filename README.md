@@ -174,5 +174,5 @@ These Vim Visual Cheat Sheets are released under [Creative Commons Attribution-S
 License
 -------
 
-This vimrc file is released under [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/deed.en_US).
+This vimrc project is released under [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/deed.en_US).
 
