@@ -87,4 +87,4 @@
 	url = git://github.com/mileszs/ack.vim.git
 [submodule "bundle/pyflakes-vim"]
 	path = bundle/pyflakes-vim
-	url = git://github.com/kevinw/pyflakes-vim.git
+	url = git://github.com/MiCHiLU/pyflakes-vim.git
