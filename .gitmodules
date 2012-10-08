@@ -85,3 +85,6 @@
 [submodule "bundle/ack.vim"]
 	path = bundle/ack.vim
 	url = git://github.com/mileszs/ack.vim.git
+[submodule "bundle/pyflakes-vim"]
+	path = bundle/pyflakes-vim
+	url = git://github.com/kevinw/pyflakes-vim.git
