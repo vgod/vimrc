@@ -24,6 +24,8 @@ set ruler		" show the cursor position all the time
 set autoread		" auto read when file is changed from outside
 
 
+filetype off          " necessary to make ftdetect work on Linux
+syntax on
 filetype on           " Enable filetype detection
 filetype indent on    " Enable filetype-specific indenting
 filetype plugin on    " Enable filetype-specific plugins
@@ -328,3 +330,5 @@ let g:tagbar_autofocus = 1
 
 " --- SnipMate
 let g:snipMateAllowMatchingDot = 0
+
+" --- coffee-script
