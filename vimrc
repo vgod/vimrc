@@ -25,7 +25,7 @@ set autoread		" auto read when file is changed from outside
 
 
 filetype off          " necessary to make ftdetect work on Linux
-syntax on"
+syntax on
 filetype on           " Enable filetype detection
 filetype indent on    " Enable filetype-specific indenting
 filetype plugin on    " Enable filetype-specific plugins
