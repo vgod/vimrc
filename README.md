@@ -128,8 +128,8 @@ PLUGINS
 * [Indent Motion](https://github.com/vim-scripts/indent-motion): Vim motions to the start and end of the current indentation-delimited block 
 
   Useful commands:    
-    `,]` move to the end of the current indentation-delimited block (very useful in Python)   
-    `,[` move to the beginning of the current indentation-delimited block (very useful in Python)   
+    `,]` move to the end of the current indentation-delimited block (very useful in Python and CoffeeScript)
+    `,[` move to the beginning of the current indentation-delimited block (very useful in Python and CoffeeScript)
 
 * [Zen Coding](https://github.com/mattn/zencoding-vim): expanding abbreviation like zen-coding.
 
@@ -145,7 +145,7 @@ Language specific supports
 
 * Latex: Read `:help latex-suite.txt`
 * Restructured Text: `ctrl-u 1~5` inserts Part/Chapter/Section headers
-* HTML, Javascript, Python, CSS, C, C++, Java: use `TAB` to do omni-completion.
+* HTML, Javascript, CoffeeScript, Python, CSS, C, C++, Java: use `TAB` to do omni-completion.
 * HTML/XML: End tags are automatically completed after typing a begin tag. (Typing > twice pushes the end tag to a new line.)
 
 Other good references
