@@ -91,3 +91,6 @@
 [submodule "bundle/vundle"]
 	path = bundle/vundle
 	url = git://github.com/gmarik/vundle.git
+[submodule "bundle/vim-jade"]
+	path = bundle/vim-jade
+	url = git://github.com/digitaltoad/vim-jade.git
