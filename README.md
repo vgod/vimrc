@@ -139,6 +139,7 @@ PLUGINS
 * [ack.vim](https://github.com/mileszs/ack.vim): run ack (a better grep) from vim, and shows the results in a split window.
 
   `:Ack [options] {pattern} [{directory}]`
+* [Vundle](git://github.com/gmarik/vundle.git): Vundle, the plug-in manager for Vim 
 
 Language specific supports
 --------------------------
