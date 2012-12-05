@@ -141,6 +141,8 @@ PLUGINS
   `:Ack [options] {pattern} [{directory}]`
 * [Vundle](git://github.com/gmarik/vundle.git): Vundle, the plug-in manager for Vim 
 
+* [Vim Jade](https://github.com/digitaltoad/vim-jade): Vim syntax highlighting for Jade templates.
+
 Language specific supports
 --------------------------
 
