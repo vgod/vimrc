@@ -302,7 +302,12 @@ if !has("gui_running")
    nmap OC l
    nmap OD h
 endif
- 
+
+" --- Vundle
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+
 " --- Command-T
 let g:CommandTMaxHeight = 15
 
