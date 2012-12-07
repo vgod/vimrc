@@ -22,6 +22,8 @@ set bs=2		" allow backspacing over everything in insert mode
 set history=50		" keep 50 lines of command line history
 set ruler		" show the cursor position all the time
 set autoread		" auto read when file is changed from outside
+set mouse=a             " use mouse in vim
+set number              " setting up line numbers
 
 
 filetype off          " necessary to make ftdetect work on Linux
@@ -301,7 +303,10 @@ if !has("gui_running")
    nmap OD h
 endif
 
-
+" --- Vundle
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
 
 " --- Command-T
 let g:CommandTMaxHeight = 15
@@ -333,3 +338,4 @@ let g:snipMateAllowMatchingDot = 0
 
 " --- coffee-script
 au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw! " recompile coffee scripts on write
+

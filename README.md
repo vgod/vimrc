@@ -139,6 +139,11 @@ PLUGINS
 * [ack.vim](https://github.com/mileszs/ack.vim): run ack (a better grep) from vim, and shows the results in a split window.
 
   `:Ack [options] {pattern} [{directory}]`
+* [Vundle](git://github.com/gmarik/vundle.git): Vundle, the plug-in manager for Vim 
+
+* [Vim Jade](https://github.com/digitaltoad/vim-jade): Vim syntax highlighting for Jade templates.
+
+* [Vim less](https://github.com/groenewege/vim-less): This vim bundle adds syntax highlighting, indenting and autocompletion for the dynamic stylesheet language LESS.
 
 Language specific supports
 --------------------------
