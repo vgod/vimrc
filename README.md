@@ -140,6 +140,8 @@ PLUGINS
 
   `:Ack [options] {pattern} [{directory}]`
 
+* [Git Gutter](https://github.com/airblade/vim-gitgutter): shows a git diff in the 'gutter' (sign column). It shows whether each line has been added, modified, and where lines have been removed.
+
 Language specific supports
 --------------------------
 
