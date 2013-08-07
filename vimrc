@@ -160,6 +160,8 @@ map <S-L> gt
 
 " new tab
 map <C-t><C-t> :tabnew<CR>
+" edit tab
+map <leader>te :tabedit<SPACE>
 " close tab
 map <C-t><C-w> :tabclose<CR> 
 
