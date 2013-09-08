@@ -73,6 +73,10 @@ set novisualbell
 set t_vb=
 set tm=500
 
+" Folder setting
+set foldmethod=marker
+
+
 " TAB setting{
    set expandtab        "replace <TAB> with spaces
    set softtabstop=4 
