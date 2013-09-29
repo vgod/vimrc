@@ -204,7 +204,7 @@ cmap cd. lcd %:p:h
 "--------------------------------------------------------------------------- 
 
 " Ctrl-[ jump out of the tag stack (undo Ctrl-])
-map <C-[> <ESC>:po<CR>
+map [[ :po<CR>
 
 " ,g generates the header guard
 map <leader>g :call IncludeGuard()<CR>
