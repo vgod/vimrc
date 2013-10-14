@@ -91,3 +91,6 @@
 [submodule "bundle/snipmate-snippets"]
 	path = bundle/snipmate-snippets
 	url = git://github.com/scrooloose/snipmate-snippets.git
+[submodule "bundle/vim-haskell"]
+	path = bundle/vim-haskell
+	url = https://github.com/wlangstroth/vim-haskell.git
