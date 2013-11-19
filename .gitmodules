@@ -75,7 +75,7 @@
 	url = https://github.com/MarcWeber/vim-addon-mw-utils.git
 [submodule "bundle/zencoding-vim"]
 	path = bundle/zencoding-vim
-	url = http://github.com/mattn/zencoding-vim.git
+	url = https://github.com/mattn/zencoding-vim.git
 [submodule "bundle/ack.vim"]
 	path = bundle/ack.vim
 	url = git://github.com/mileszs/ack.vim.git
