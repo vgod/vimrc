@@ -1,6 +1,6 @@
 [submodule "bundle/vim-latex"]
 	path = bundle/vim-latex
-	url = git://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex/
+	url = https://vim-latex.git.sourceforge.net/gitroot/vim-latex/vim-latex/
 [submodule "bundle/smart-parentheses"]
 	path = bundle/smart-parentheses
 	url = https://github.com/vim-scripts/Smart-Parentheses.git
@@ -48,10 +48,10 @@
 	url = https://github.com/scrooloose/nerdcommenter.git
 [submodule "bundle/easymotion"]
 	path = bundle/easymotion
-	url = git://github.com/Lokaltog/vim-easymotion.git
+	url = https://github.com/Lokaltog/vim-easymotion.git
 [submodule "bundle/tagbar"]
 	path = bundle/tagbar
-	url = git://github.com/majutsushi/tagbar
+	url = https://github.com/majutsushi/tagbar
 [submodule "bundle/pythoncomplete"]
 	path = bundle/pythoncomplete
 	url = https://github.com/vim-scripts/pythoncomplete.git
@@ -63,10 +63,10 @@
 	url = https://github.com/pangloss/vim-javascript.git
 [submodule "bundle/indent-motion"]
 	path = bundle/indent-motion
-	url = git://github.com/vim-scripts/indent-motion.git
+	url = https://github.com/vim-scripts/indent-motion.git
 [submodule "bundle/vim-snipmate"]
 	path = bundle/vim-snipmate
-	url = git://github.com/davidhalter/vim-snipmate.git
+	url = https://github.com/davidhalter/vim-snipmate.git
 [submodule "bundle/tlib_vim"]
 	path = bundle/tlib_vim
 	url = https://github.com/tomtom/tlib_vim.git
@@ -78,16 +78,16 @@
 	url = http://github.com/mattn/zencoding-vim.git
 [submodule "bundle/ack.vim"]
 	path = bundle/ack.vim
-	url = git://github.com/mileszs/ack.vim.git
+	url = https://github.com/mileszs/ack.vim.git
 [submodule "bundle/pyflakes-vim"]
 	path = bundle/pyflakes-vim
-	url = git://github.com/MiCHiLU/pyflakes-vim.git
+	url = https://github.com/MiCHiLU/pyflakes-vim.git
 [submodule "bundle/vim-coffee-script"]
 	path = bundle/vim-coffee-script
-	url = git://github.com/kchmck/vim-coffee-script.git
+	url = https://github.com/kchmck/vim-coffee-script.git
 [submodule "bundle/vim-gitgutter"]
 	path = bundle/vim-gitgutter
-	url = git://github.com/airblade/vim-gitgutter.git
+	url = https://github.com/airblade/vim-gitgutter.git
 [submodule "bundle/snipmate-snippets"]
 	path = bundle/snipmate-snippets
-	url = git://github.com/scrooloose/snipmate-snippets.git
+	url = https://github.com/scrooloose/snipmate-snippets.git
