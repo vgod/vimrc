@@ -336,3 +336,7 @@ au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw! " recompile c
 
 " --- vim-gitgutter
 let g:gitgutter_enabled = 1
+
+" set ejs filetype to html
+au BufNewFile,BufRead *.ejs set filetype=html
+
