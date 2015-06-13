@@ -91,3 +91,6 @@
 [submodule "bundle/snipmate-snippets"]
 	path = bundle/snipmate-snippets
 	url = https://github.com/scrooloose/snipmate-snippets.git
+[submodule "bundle/vim-js-indent"]
+	path = bundle/vim-js-indent
+	url = https://github.com/jason0x43/vim-js-indent.git
