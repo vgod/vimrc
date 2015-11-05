@@ -27,7 +27,7 @@ MANUALLY INSTALL
 
 2. Install ~/.vimrc and ~/.gvimrc
 
-        ./install-vimrc.sh
+        sudo ./install-vimrc.sh
 
 3. (Optional, if you want Command-T) Compile the Command-T plugin
 
