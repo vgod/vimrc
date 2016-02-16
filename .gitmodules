@@ -94,3 +94,6 @@
 [submodule "bundle/vim-js-indent"]
 	path = bundle/vim-js-indent
 	url = https://github.com/jason0x43/vim-js-indent.git
+[submodule "bundle/vim-jsx"]
+	path = bundle/vim-jsx
+	url = git@github.com:mxw/vim-jsx.git
