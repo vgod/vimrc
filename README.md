@@ -142,6 +142,8 @@ PLUGINS
 
   `:Ack [options] {pattern} [{directory}]`
 
+* [salt-yaml](https://github.com/saltstack/salt-vim): VIm files for working on Salt files.
+
 * [Git Gutter](https://github.com/airblade/vim-gitgutter): shows a git diff in the 'gutter' (sign column). It shows whether each line has been added, modified, and where lines have been removed.
 
 Language specific supports
