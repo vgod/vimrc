@@ -1,19 +1,95 @@
-" vgod's vimrc
-" Tsung-Hsiang (Sean) Chang <vgod@vgod.tw>
-" Fork me on GITHUB  https://github.com/vgod/vimrc
+" circlelychen's vimrc
+" Forked from Tsung-Hsiang (Sean) Chang <vgod@vgod.tw>
 
-" read https://github.com/vgod/vimrc/blob/master/README.md for more info
-
-
-" For pathogen.vim: auto load all plugins in .vim/bundle
-
-let g:pathogen_disabled = []
-if !has('gui_running')
-   call add(g:pathogen_disabled, 'powerline')
+" Setting up Vundle - the vim plugin bundler
+let iCanHazVundle=1
+let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
+if !filereadable(vundle_readme)
+  echo "Installing Vundle.."
+  echo ""
+  silent !mkdir -p ~/.vim/bundle
+  silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+  let iCanHazVundle=0
 endif
 
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required!
+Bundle 'gmarik/vundle'
+
+"Java Omni-completion.
+Bundle 'vim-scripts/javacomplete' 
+
+"C/C++ omni-completion with ctags database.
+Bundle 'vim-scripts/OmniCppComplete' 
+
+"Maintains a history of previous yanks, changes and deletes
+Bundle 'vim-scripts/YankRing.vim' 
+
+"Produce increasing/decreasing columns of numbers, dates, or daynames.
+Bundle 'vim-scripts/VisIncr' 
+
+"Vim motions to the start and end of the current indentation-delimited block
+Bundle 'vim-scripts/indent-motion' 
+
+"A tree explorer plugin for navigating the filesystem
+Bundle 'scrooloose/nerdtree' 
+Bundle 'scrooloose/nerdcommenter'
+
+"Inserts matching bracket, paren, brace or quote. 
+Bundle 'Townk/vim-autoclose' 
+
+"True Sublime Text style multiple selections for Vim
+Bundle 'terryma/vim-multiple-cursors' 
+
+"Deal with pairs of surroundings.
+Bundle 'tpope/vim-surround' 
+
+"Extended % matching for HTML, LaTeX, and many other languages.
+Bundle 'vim-scripts/matchit.zip' 
+
+"XML/HTML tags will be completed automatically.
+Bundle 'sukima/xmledit' 
+
+"run ack (a better grep) from vim, and shows the results in a split window.
+Bundle 'mileszs/ack.vim' 
+
+"An easy way to jump to a word.
+Bundle 'Lokaltog/vim-easymotion' 
+
+"Latex support.
+Bundle 'vim-latex/vim-latex'
+
+"Do all your insert-mode completion with Tab.
+Bundle 'ervandew/supertab' 
+
+"browsing the tags of source files ordered by classes.
+Bundle 'majutsushi/tagbar' 
+
+"showing error and warning icons on line.
+Bundle 'Twinside/vim-cuteErrorMarker' 
+
+"expanding abbreviation like zen-coding.
+Bundle 'mattn/emmet-vim' 
+
+"allows you to create better-looking, more functional vim statuslines.
+Bundle 'Lokaltog/vim-powerline' 
+
+"shows a git diff in the 'gutter' (sign column). It shows whether each line has been added, modified, and where lines have been removed.
+Bundle 'airblade/vim-gitgutter' 
+
+Bundle 'vgod/scala-vim-support'
+
+" completion for python
+Bundle 'vim-scripts/pythoncomplete' 
+Bundle 'davidhalter/vim-snipmate' 
+Bundle 'tomtom/tlib_vim'
+Bundle 'MarcWeber/vim-addon-mw-utils'
+Bundle 'scrooloose/snipmate-snippets'
+
+Bundle 'wincent/Command-T' 
 
 " General Settings
 
@@ -25,7 +101,6 @@ set autoread		" auto read when file is changed from outside
 
 
 filetype off          " necessary to make ftdetect work on Linux
-syntax on
 filetype on           " Enable filetype detection
 filetype indent on    " Enable filetype-specific indenting
 filetype plugin on    " Enable filetype-specific plugins
@@ -128,9 +203,9 @@ endfun
 "--------------------------------------------------------------------------- 
 " USEFUL SHORTCUTS
 "--------------------------------------------------------------------------- 
-" set leader to ,
-let mapleader=","
-let g:mapleader=","
+" set leader to 
+" let mapleader=","
+" let g:mapleader=","
 
 "replace the current word in all opened buffers
 map <leader>r :call Replace()<CR>
@@ -200,7 +275,7 @@ cmap cd. lcd %:p:h
    " Ctrl-u 4:    underline Section Level 2 w/ -'s
    noremap  <C-u>4 yypVr-
    inoremap <C-u>4 <esc>yypVr-A
-   " Ctrl-u 5:    underline Section Level 3 w/ ^'s
+   " Ctrl-u 5:    unDerline Section Level 3 w/ ^'s
    noremap  <C-u>5 yypVr^
    inoremap <C-u>5 <esc>yypVr^A
 "}
@@ -319,7 +394,7 @@ let g:SuperTabContextDiscoverDiscovery = ["&completefunc:<c-x><c-u>", "&omnifunc
 
 
 " --- EasyMotion
-"let g:EasyMotion_leader_key = '<Leader>m' " default is <Leader>w
+"let g: = '<leader>m' " default is <leader>w
 hi link EasyMotionTarget ErrorMsg
 hi link EasyMotionShade  Comment
 
@@ -342,3 +417,7 @@ au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw! " recompile c
 
 " --- vim-gitgutter
 let g:gitgutter_enabled = 1
+
+
+" let Vundle manage Vundle
+
