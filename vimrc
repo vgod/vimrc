@@ -91,6 +91,11 @@ Bundle 'scrooloose/snipmate-snippets'
 
 Bundle 'wincent/Command-T' 
 
+" YouCompleteMe
+Bundle 'Valloric/YouCompleteMe'
+
+Bundle 'fatih/vim-go'
+
 " General Settings
 
 set nocompatible	" not compatible with the old-fashion vi mode
