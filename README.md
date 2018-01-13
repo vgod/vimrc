@@ -6,66 +6,27 @@ Original Author: Tsung-Hsiang (Sean) Chang <vgod@vgod.tw>
 
 Fork me on GITHUB  https://github.com/circlelychen/vimrc.
 
-ONE-STEP INSTALL
-----------------
-
-Use curl (for Mac OS X):
-
-     curl -o - https://raw.github.com/circlelychen/vimrc/master/auto-install.sh | sh
-
-or wget (for most UNIX platforms):
-
-     wget -O - https://raw.github.com/circlelychen/vimrc/master/auto-install.sh | sh
-
-
-MANUALLY INSTALL
+INSTALL
 ----------------
 
 1. Check out from github
 
         git clone git://github.com/circlelychen/vimrc.git ~/.vim
         cd ~/.vim
-        git submodule update --init
 
 2. Install ~/.vimrc and ~/.gvimrc
 
         ./install-vimrc.sh
+
+3. Install/Upgrade Plugin
+
+        Open VIM editor and execuste :BundleInstall
 
 3. (Optional, if you want Command-T) Compile the Command-T plugin
 
         cd .vim/bundle/command-t/ruby/command-t
         ruby extconf.rb
         make
-
-MANUALLY INSTALL ON WINDOWS
----------------------------
-
-1. Check out from github
-
-        cd C:\Program Files\Vim   (or your installed path to Vim)
-        rmdir /s vimfiles         (This deletes your old vim configurations. If you want to keep it, use move instead of rmdir.)
-        git clone git://github.com/circlelychen/vimrc.git vimfiles
-        git submodule update --init
-
-2. Install vimrc. Add the following line at the end of C:\Program Files\Vim\vimrc.
-
-        source $VIM/vimfiles/vimrc
-
-
-  
-INSTALL & UPGRADE PLUGIN BUNDLES
---------------------------------
-
-All plugins (except vim-latex) were checked out as git submodules, 
-which can be upgraded with `git pull`. For example, to upgrade Command-T 
-
-     cd ~/.vim/bundle/command-t
-     git pull
-
-To install a new plugin as a git submoudle, type the following commands.
-
-     cd ~/.vim
-     git submodule add [GIT-REPOSITORY-URL] bundle/[PLUGIN-NAME]
 
 HOW TO USE
 ----------
@@ -74,8 +35,6 @@ see the "USEFUL SHORTCUTS" section in vimrc to learn my shortcuts.
 
 PLUGINS
 -------
-
-* [Pathogen](http://www.vim.org/scripts/script.php?script_id=2332): Pathogen let us install a plugin as a bundle in ~/.vim/bundle seprately.
 
 * [Nerd Tree](http://www.vim.org/scripts/script.php?script_id=1658): A tree explorer plugin for navigating the filesystem.
 
@@ -112,9 +71,7 @@ PLUGINS
 
 * [vim-latex](http://vim-latex.sourceforge.net/): Latex support.
 
-* [OmniCppComplete](http://www.vim.org/scripts/script.php?script_id=1520): C/C++ omni-completion with ctags database.
-
-* [JavaComplete](http://www.vim.org/scripts/script.php?script_id=1785): Java Omni-completion.
+* [YouCompleteMe](https://github.com/Valloric/YouCompleteMe): A code-completion engine for Vim
 
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion): An easy way to jump to a word.
 

@@ -19,12 +19,6 @@ call vundle#rc()
 " required!
 Bundle 'gmarik/vundle'
 
-"Java Omni-completion.
-Bundle 'vim-scripts/javacomplete' 
-
-"C/C++ omni-completion with ctags database.
-Bundle 'vim-scripts/OmniCppComplete' 
-
 "Maintains a history of previous yanks, changes and deletes
 Bundle 'vim-scripts/YankRing.vim' 
 
