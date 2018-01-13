@@ -22,6 +22,18 @@ INSTALL
 
         Open VIM editor and execuste :BundleInstall
 
+4. (Optional, if you want youCompleteMe ) Comple YCM plugin for specific language
+
+* Golang
+
+    cd ~/.vim/bundle/YouCompleteMe
+    ./install.py --go-completer 
+
+* C/C++
+
+    cd ~/.vim/bundle/YouCompleteMe
+    ./install.py --clang-completer
+
 3. (Optional, if you want Command-T) Compile the Command-T plugin
 
         cd .vim/bundle/command-t/ruby/command-t
