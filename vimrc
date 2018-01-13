@@ -77,7 +77,6 @@ Bundle 'airblade/vim-gitgutter'
 Bundle 'vgod/scala-vim-support'
 
 " completion for python
-Bundle 'vim-scripts/pythoncomplete' 
 Bundle 'davidhalter/vim-snipmate' 
 Bundle 'tomtom/tlib_vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
@@ -88,10 +87,14 @@ Bundle 'wincent/Command-T'
 " YouCompleteMe
 Bundle 'Valloric/YouCompleteMe'
 
+" vim-go plugin
 Bundle 'fatih/vim-go'
 
 " General Settings
-
+set shell=/bin/bash
+if $TERM == "xterm"
+    set t_Co=256               " 256 colors
+endif 
 set nocompatible	" not compatible with the old-fashion vi mode
 set bs=2		" allow backspacing over everything in insert mode
 set history=50		" keep 50 lines of command line history
@@ -182,8 +185,6 @@ endfunction
 "}
 
 
-" C/C++ specific settings
-autocmd FileType c,cpp,cc  set cindent comments=sr:/*,mb:*,el:*/,:// cino=>s,e0,n0,f0,{0,}0,^-1s,:0,=s,g0,h1s,p2,t0,+2,(2,)20,*30
 
 "Restore cursor to file position in previous editing session
 set viminfo='10,\"100,:20,%,n~/.viminfo
@@ -203,8 +204,7 @@ endfun
 " USEFUL SHORTCUTS
 "--------------------------------------------------------------------------- 
 " set leader to 
-" let mapleader=","
-" let g:mapleader=","
+let g:mapleader=","
 
 "replace the current word in all opened buffers
 map <leader>r :call Replace()<CR>
@@ -420,3 +420,15 @@ let g:gitgutter_enabled = 1
 
 " let Vundle manage Vundle
 
+" ===========================================================
+" FileType specific changes
+" ============================================================
+" Golang
+autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 
+
+" Mako/HTML
+autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
+autocmd FileType html,xhtml,xml,css setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+
+" C/C++ specific settings
+autocmd FileType c,cpp,cc  set cindent comments=sr:/*,mb:*,el:*/,:// cino=>s,e0,n0,f0,{0,}0,^-1s,:0,=s,g0,h1s,p2,t0,+2,(2,)20,*30
