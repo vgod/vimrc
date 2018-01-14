@@ -402,6 +402,9 @@ let g:ycm_semantic_triggers =  {
     \   'haskell' : ['.', 're!.']
     \ }
 
+" --- vim-go ---
+let g:go_fmt_command = "goimports"
+
 
 " let Vundle manage Vundle
 
