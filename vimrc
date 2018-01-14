@@ -33,7 +33,7 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/nerdcommenter'
 
 "Inserts matching bracket, paren, brace or quote. 
-Bundle 'Townk/vim-autoclose' 
+Bundle 'Raimondi/delimitMate'
 
 "True Sublime Text style multiple selections for Vim
 Bundle 'terryma/vim-multiple-cursors' 
@@ -296,17 +296,6 @@ fun! IncludeGuard()
    call append( line("$"), "#endif // for #ifndef " . guard)
 endfun
 
-
-
-" Enable omni completion. (Ctrl-X Ctrl-O)
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType c set omnifunc=ccomplete#Complete
-autocmd FileType java set omnifunc=javacomplete#Complete
-
 " use syntax complete if nothing else available
 if has("autocmd") && exists("+omnifunc")
   autocmd Filetype *
@@ -365,24 +354,6 @@ let g:tex_flavor='latex'
 
 "}
 
-
-" --- AutoClose - Inserts matching bracket, paren, brace or quote 
-" fixed the arrow key problems caused by AutoClose
-if !has("gui_running")	
-   set term=linux
-   imap OA <ESC>ki
-   imap OB <ESC>ji
-   imap OC <ESC>li
-   imap OD <ESC>hi
-
-   nmap OA k
-   nmap OB j
-   nmap OC l
-   nmap OD h
-endif
-
-
-
 " --- Command-T
 let g:CommandTMaxHeight = 15
 
@@ -404,10 +375,6 @@ nnoremap <silent> <F7> :TagbarToggle<CR>
 " set focus to TagBar when opening it
 let g:tagbar_autofocus = 1
 
-" --- PowerLine
-" let g:Powerline_symbols = 'fancy' " require fontpatcher
-"
-
 " --- SnipMate
 let g:snipMateAllowMatchingDot = 0
 
@@ -416,6 +383,24 @@ au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw! " recompile c
 
 " --- vim-gitgutter
 let g:gitgutter_enabled = 1
+
+" --- YouCompleteMe ---
+let g:ycm_semantic_triggers =  {
+    \   'c' : ['->', '.'],
+    \   'objc' : ['->', '.'],
+    \   'ocaml' : ['.', '#'],
+    \   'cpp,objcpp' : ['->', '.', '::'],
+    \   'perl' : ['->'],
+    \   'php' : ['->', '::', '"', "'", 'use ', 'namespace ', '\'],
+    \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+    \   'html': ['<', '"', '</', ' '],
+    \   'scss,sass,css': [ 're!^\s{4}', 're!:\s+' ],
+    \   'vim' : ['re![_a-za-z]+[_\w]*\.'],
+    \   'ruby' : ['.', '::'],
+    \   'lua' : ['.', ':'],
+    \   'erlang' : [':'],
+    \   'haskell' : ['.', 're!.']
+    \ }
 
 
 " let Vundle manage Vundle
