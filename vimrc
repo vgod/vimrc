@@ -374,6 +374,33 @@ hi link EasyMotionShade  Comment
 nnoremap <silent> <F7> :TagbarToggle<CR> 
 " set focus to TagBar when opening it
 let g:tagbar_autofocus = 1
+let g:tagbar_type_go = {  
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+	\ 'p:package',
+	\ 'i:imports:1',
+	\ 'c:constants',
+	\ 'v:variables',
+	\ 't:types',
+	\ 'n:interfaces',
+	\ 'w:fields',
+	\ 'e:embedded',
+	\ 'm:methods',
+	\ 'r:constructor',
+	\ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+	\ 't' : 'ctype',
+	\ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+	\ 'ctype' : 't',
+	\ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+\ }        
 
 " --- SnipMate
 let g:snipMateAllowMatchingDot = 0
@@ -404,7 +431,16 @@ let g:ycm_semantic_triggers =  {
 
 " --- vim-go ---
 let g:go_fmt_command = "goimports"
+let g:go_autodetect_gopath = 1
+let g:go_list_type = "quickfix"
 
+let g:go_auto_type_info = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_generate_tags = 1
 
 " let Vundle manage Vundle
 
@@ -412,6 +448,8 @@ let g:go_fmt_command = "goimports"
 " FileType specific changes
 " ============================================================
 " Golang
+autocmd FileType go nmap <leader>b <Plug>(go-build)
+autocmd FileType go nmap <Leader>i <Plug>(go-info)
 autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 
 
 " Mako/HTML
