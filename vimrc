@@ -370,33 +370,33 @@ hi link EasyMotionShade  Comment
 
 
 " --- TagBar
-" toggle TagBar with F7
-nnoremap <silent> <F7> :TagbarToggle<CR> 
+" toggle TagBar with <F7>
+nnoremap <leader>tb :TagbarToggle<CR> 
 " set focus to TagBar when opening it
 let g:tagbar_autofocus = 1
 let g:tagbar_type_go = {  
     \ 'ctagstype' : 'go',
     \ 'kinds'     : [
-	\ 'p:package',
-	\ 'i:imports:1',
-	\ 'c:constants',
-	\ 'v:variables',
-	\ 't:types',
-	\ 'n:interfaces',
-	\ 'w:fields',
-	\ 'e:embedded',
-	\ 'm:methods',
-	\ 'r:constructor',
-	\ 'f:functions'
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
     \ ],
     \ 'sro' : '.',
     \ 'kind2scope' : {
-	\ 't' : 'ctype',
-	\ 'n' : 'ntype'
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
     \ },
     \ 'scope2kind' : {
-	\ 'ctype' : 't',
-	\ 'ntype' : 'n'
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
     \ },
     \ 'ctagsbin'  : 'gotags',
     \ 'ctagsargs' : '-sort -silent'
@@ -434,13 +434,14 @@ let g:go_fmt_command = "goimports"
 let g:go_autodetect_gopath = 1
 let g:go_list_type = "quickfix"
 
-let g:go_auto_type_info = 1
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_generate_tags = 1
+" disable go_auto_type_info due to performance issue
+"let g:go_auto_type_info = 1
 
 " let Vundle manage Vundle
 
@@ -450,11 +451,11 @@ let g:go_highlight_generate_tags = 1
 " Golang
 autocmd FileType go nmap <leader>b <Plug>(go-build)
 autocmd FileType go nmap <Leader>i <Plug>(go-info)
-autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 
+autocmd FileType go nmap <Leader>ds <Plug>(go-def-stack)
+autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
 
 " Mako/HTML
 autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
 autocmd FileType html,xhtml,xml,css setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
 " C/C++ specific settings
-autocmd FileType c,cpp,cc  set cindent comments=sr:/*,mb:*,el:*/,:// cino=>s,e0,n0,f0,{0,}0,^-1s,:0,=s,g0,h1s,p2,t0,+2,(2,)20,*30
