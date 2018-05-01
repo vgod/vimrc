@@ -100,6 +100,7 @@ set bs=2		" allow backspacing over everything in insert mode
 set history=50		" keep 50 lines of command line history
 set ruler		" show the cursor position all the time
 set autoread		" auto read when file is changed from outside
+set number              " show line number
 
 
 filetype off          " necessary to make ftdetect work on Linux
@@ -450,8 +451,10 @@ let g:go_highlight_generate_tags = 1
 " ============================================================
 " Golang
 autocmd FileType go nmap <leader>b <Plug>(go-build)
-autocmd FileType go nmap <Leader>i <Plug>(go-info)
-autocmd FileType go nmap <Leader>ds <Plug>(go-def-stack)
+autocmd FileType go nmap <leader>i <Plug>(go-info)
+autocmd FileType go nmap <leader>ds <Plug>(go-def-stack)
+autocmd FileType go nmap <leader>t <Plug>(go-test)
+autocmd FileType go nmap <leader>c <Plug>(go-coverage-browser)
 autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
 
 " Mako/HTML
