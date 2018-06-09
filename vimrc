@@ -17,78 +17,87 @@ call vundle#rc()
 
 " let Vundle manage Vundle
 " required!
-Bundle 'gmarik/vundle'
+Plugin 'gmarik/vundle'
 
 "Maintains a history of previous yanks, changes and deletes
-Bundle 'vim-scripts/YankRing.vim' 
+Plugin 'vim-scripts/YankRing.vim' 
 
 "Produce increasing/decreasing columns of numbers, dates, or daynames.
-Bundle 'vim-scripts/VisIncr' 
+Plugin 'vim-scripts/VisIncr' 
 
 "Vim motions to the start and end of the current indentation-delimited block
-Bundle 'vim-scripts/indent-motion' 
+Plugin 'vim-scripts/indent-motion' 
 
 "A tree explorer plugin for navigating the filesystem
-Bundle 'scrooloose/nerdtree' 
-Bundle 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdtree' 
+Plugin 'scrooloose/nerdcommenter'
 
 "Inserts matching bracket, paren, brace or quote. 
-Bundle 'Raimondi/delimitMate'
+Plugin 'Raimondi/delimitMate'
 
 "True Sublime Text style multiple selections for Vim
-Bundle 'terryma/vim-multiple-cursors' 
+Plugin 'terryma/vim-multiple-cursors' 
 
 "Deal with pairs of surroundings.
-Bundle 'tpope/vim-surround' 
+Plugin 'tpope/vim-surround' 
 
 "Extended % matching for HTML, LaTeX, and many other languages.
-Bundle 'vim-scripts/matchit.zip' 
+Plugin 'vim-scripts/matchit.zip' 
 
 "XML/HTML tags will be completed automatically.
-Bundle 'sukima/xmledit' 
+Plugin 'sukima/xmledit' 
 
 "run ack (a better grep) from vim, and shows the results in a split window.
-Bundle 'mileszs/ack.vim' 
+Plugin 'mileszs/ack.vim' 
 
 "An easy way to jump to a word.
-Bundle 'Lokaltog/vim-easymotion' 
+Plugin 'Lokaltog/vim-easymotion' 
 
 "Latex support.
-Bundle 'vim-latex/vim-latex'
+Plugin 'vim-latex/vim-latex'
 
 "Do all your insert-mode completion with Tab.
-Bundle 'ervandew/supertab' 
+Plugin 'ervandew/supertab' 
 
 "browsing the tags of source files ordered by classes.
-Bundle 'majutsushi/tagbar' 
+Plugin 'majutsushi/tagbar' 
+
+" Code and files fuzzy finder
+Plugin 'ctrlpvim/ctrlp.vim'
+
+" Extension to ctrlp, for fuzzy command finder
+Plugin 'fisadev/vim-ctrlp-cmdpalette'
 
 "showing error and warning icons on line.
-Bundle 'Twinside/vim-cuteErrorMarker' 
+Plugin 'Twinside/vim-cuteErrorMarker' 
 
 "expanding abbreviation like zen-coding.
-Bundle 'mattn/emmet-vim' 
+Plugin 'mattn/emmet-vim' 
 
 "allows you to create better-looking, more functional vim statuslines.
-Bundle 'Lokaltog/vim-powerline' 
+Plugin 'Lokaltog/vim-powerline' 
 
 "shows a git diff in the 'gutter' (sign column). It shows whether each line has been added, modified, and where lines have been removed.
-Bundle 'airblade/vim-gitgutter' 
+Plugin 'airblade/vim-gitgutter' 
 
-Bundle 'vgod/scala-vim-support'
+Plugin 'vgod/scala-vim-support'
 
 " completion for python
-Bundle 'davidhalter/vim-snipmate' 
-Bundle 'tomtom/tlib_vim'
-Bundle 'MarcWeber/vim-addon-mw-utils'
-Bundle 'scrooloose/snipmate-snippets'
+Plugin 'davidhalter/vim-snipmate' 
+Plugin 'tomtom/tlib_vim'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'scrooloose/snipmate-snippets'
 
-Bundle 'wincent/Command-T' 
+Plugin 'wincent/Command-T' 
 
 " YouCompleteMe
-Bundle 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe'
+
+" jeidi-vim
+"Plugin 'davidhalter/jedi-vim'
 
 " vim-go plugin
-Bundle 'fatih/vim-go'
+Plugin 'fatih/vim-go'
 
 " General Settings
 set shell=/bin/bash
@@ -413,6 +422,7 @@ au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw! " recompile c
 let g:gitgutter_enabled = 1
 
 " --- YouCompleteMe ---
+let g:ycm_autoclose_preview_window_after_completion=1
 let g:ycm_semantic_triggers =  {
     \   'c' : ['->', '.'],
     \   'objc' : ['->', '.'],
@@ -460,5 +470,8 @@ autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
 " Mako/HTML
 autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
 autocmd FileType html,xhtml,xml,css setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+
+" Python
+autocmd BufNewFile,BufNewFile *.py setlocal textwidth=79 tabstop=4 fileformat=unix 
 
 " C/C++ specific settings

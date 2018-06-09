@@ -20,7 +20,13 @@ INSTALL
 
 3. Install/Upgrade Plugin
 
+* Editor mode
+
         Open VIM editor and execuste :BundleInstall
+
+* CLI mode
+
+        vim +BundleInstall +qall
 
 4. (Optional, if you want youCompleteMe ) Comple YCM plugin for specific language
 
@@ -33,6 +39,11 @@ INSTALL
 
         cd ~/.vim/bundle/YouCompleteMe
         ./install.py --clang-completer
+
+* To simply compile with everything enabled, there's a --all flag. So, to install with all language features, ensure xbuild, go, tsserver, node, npm, rustc, and cargo tools are installed and in your PATH, then simply run
+
+        cd ~/.vim/bundle/YouCompleteMe
+        ./install.py --all
 
 3. (Optional, if you want Command-T) Compile the Command-T plugin
 
