@@ -100,6 +100,9 @@ Plugin 'Valloric/YouCompleteMe'
 Plugin 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 
+" vim-markdown-preview plugin
+Plugin 'JamshedVesuna/vim-markdown-preview'
+
 " General Settings
 set shell=/bin/bash
 if $TERM == "xterm"
@@ -384,6 +387,10 @@ let g:ctrlp_custom_ignore = {
     \ 'dir': '\v[\/]\.(git|hg|svn)$',
     \ 'file': '\v\.(exe|so|dll|jpg|png|jpeg)$',
 \ }
+
+" --- vim-markdown-preview
+let g:vim_markdown_preview_github=1
+let g:vim_markdown_preview_toggle=2
 
 " --- TagBar
 " toggle TagBar with <F7>
