@@ -28,7 +28,11 @@ INSTALL
 
         vim +BundleInstall +qall
 
-4. (Optional, if you want youCompleteMe ) Comple YCM plugin for specific language
+4. (Optional, if you want vim-go ) Install all the necessary binaries for vim-go
+
+        Open VIM editor and execuste :GoInstallBinaries
+
+5. (Optional, if you want youCompleteMe ) Comple YCM plugin for specific language
 
 * Golang
 
@@ -45,7 +49,7 @@ INSTALL
         cd ~/.vim/bundle/YouCompleteMe
         ./install.py --all
 
-3. (Optional, if you want Command-T) Compile the Command-T plugin
+6. (Optional, if you want Command-T) Compile the Command-T plugin
 
         cd .vim/bundle/command-t/ruby/command-t
         ruby extconf.rb

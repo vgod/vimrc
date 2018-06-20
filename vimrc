@@ -97,7 +97,8 @@ Plugin 'Valloric/YouCompleteMe'
 "Plugin 'davidhalter/jedi-vim'
 
 " vim-go plugin
-Plugin 'fatih/vim-go'
+Plugin 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
 
 " General Settings
 set shell=/bin/bash
@@ -378,6 +379,11 @@ let g:SuperTabContextDiscoverDiscovery = ["&completefunc:<c-x><c-u>", "&omnifunc
 hi link EasyMotionTarget ErrorMsg
 hi link EasyMotionShade  Comment
 
+" --- TagBar
+let g:ctrlp_custom_ignore = {
+    \ 'dir': '\v[\/]\.(git|hg|svn)$',
+    \ 'file': '\v\.(exe|so|dll|jpg|png|jpeg)$',
+\ }
 
 " --- TagBar
 " toggle TagBar with <F7>
