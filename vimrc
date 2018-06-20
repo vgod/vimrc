@@ -99,6 +99,9 @@ Plugin 'Valloric/YouCompleteMe'
 " vim-go plugin
 Plugin 'fatih/vim-go'
 
+" vim-markdown-preview plugin
+Plugin 'JamshedVesuna/vim-markdown-preview'
+
 " General Settings
 set shell=/bin/bash
 if $TERM == "xterm"
@@ -377,6 +380,10 @@ let g:SuperTabContextDiscoverDiscovery = ["&completefunc:<c-x><c-u>", "&omnifunc
 "let g: = '<leader>m' " default is <leader>w
 hi link EasyMotionTarget ErrorMsg
 hi link EasyMotionShade  Comment
+
+" --- vim-markdown-preview
+let g:vim_markdown_preview_github=1
+let g:vim_markdown_preview_toggle=2
 
 
 " --- TagBar
