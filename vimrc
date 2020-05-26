@@ -105,6 +105,9 @@ Plugin 'Chiel92/vim-autoformat'
 " cypher-vi-syntax
 Plugin 'neo4j-contrib/cypher-vim-syntax'
 
+" vim-vue
+Plugin 'leafOfTree/vim-vue-plugin'
+
 " General Settings
 set shell=/bin/bash
 if $TERM == "xterm"
@@ -357,6 +360,7 @@ endfun
 "---------------------------------------------------------------------------
 
 
+
 " ------- vim-latex - many latex shortcuts and snippets {
 
 " IMPORTANT: win32 users will need to have 'shellslash' set so that latex
@@ -468,6 +472,9 @@ let g:go_highlight_extra_types = 1
 let g:go_highlight_generate_tags = 1
 " disable go_auto_type_info due to performance issue
 "let g:go_auto_type_info = 1
+
+" ------- vim-vue
+let g:vim_vue_plugin_load_full_syntax = 1
 
 " let Vundle manage Vundle
 
