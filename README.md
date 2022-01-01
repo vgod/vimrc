@@ -22,11 +22,11 @@ INSTALL
 
 * Editor mode
 
-        Open VIM editor and execuste :BundleInstall
+        Open VIM editor and execuste :PluginInstall
 
 * CLI mode
 
-        vim +BundleInstall +qall
+        vim +PluginInstall +qall
 
 4. (Optional, if you want vim-go ) Install all the necessary binaries for vim-go
 
