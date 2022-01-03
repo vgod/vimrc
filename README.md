@@ -8,6 +8,18 @@ Fork me on GITHUB  https://github.com/circlelychen/vimrc.
 
 INSTALL
 ----------------
+### Build a Docker image locally
+The following build two images: 
+
+* circlelychen/dev:base 
+* circlelychen/dev:vim
+* circlelychen/dev:myvim
+
+```bash
+$> ./build_docker.sh
+```
+
+### Building from source
 
 1. Check out from github
 
@@ -55,8 +67,12 @@ INSTALL
         ruby extconf.rb
         make
 
-HOW TO USE
+HOW TO USE 
 ----------
+### Runing VIM via Docker Machine 
+```bash
+$> docker run -it --rm -e "USERID=$(id -u)" -e "GROUPID=$(id -u)" -v $(pwd):/devprj circlelychen/nlpdev:$TAG
+```
 
 see the "USEFUL SHORTCUTS" section in vimrc to learn my shortcuts.
 
