@@ -98,6 +98,8 @@ PLUGINS
 
 * [vim-latex](http://vim-latex.sourceforge.net/): Latex support.
 
+* [vim-airline](https://github.com/vim-airline/vim-airline): status/tabline for vim.
+
 * [YouCompleteMe](https://github.com/Valloric/YouCompleteMe): A code-completion engine for Vim
 
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion): An easy way to jump to a word.

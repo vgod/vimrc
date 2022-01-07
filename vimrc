@@ -75,7 +75,7 @@ Plugin 'Twinside/vim-cuteErrorMarker'
 Plugin 'mattn/emmet-vim'
 
 "allows you to create better-looking, more functional vim statuslines.
-Plugin 'Lokaltog/vim-powerline'
+Plugin 'vim-airline/vim-airline'
 
 "shows a git diff in the 'gutter' (sign column). It shows whether each line has been added, modified, and where lines have been removed.
 Plugin 'airblade/vim-gitgutter'
