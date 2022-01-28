@@ -71,7 +71,7 @@ HOW TO USE
 ----------
 ### Runing VIM via Docker Machine 
 ```bash
-$> docker run -it --rm -e "USERID=$(id -u)" -e "GROUPID=$(id -u)" -v $(pwd):/devprj circlelychen/nlpdev:$TAG
+$> docker run -it --rm -e "USERID=$(id -u)" -e "GROUPID=$(id -u)" -v $(pwd):/devprj circlelychen/dev:$TAG
 ```
 
 see the "USEFUL SHORTCUTS" section in vimrc to learn my shortcuts.

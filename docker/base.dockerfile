@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:jammy-20230522
 
 MAINTAINER Hao-Yuan Chen <truecirclely@gmail.com>
 
@@ -10,14 +10,15 @@ ENV PROJROOT /devprj
 ENV DEVHOME /home/$DEVUSER
 
 # Install requirements and prerequisite
-RUN apt-get update
-RUN apt-get install -yq python3-dev build-essential cmake git curl sudo locales silversearcher-ag
+RUN apt-get update && \
+    apt-get install -yq python3-dev python3-pip build-essential cmake git curl sudo locales silversearcher-ag tree jq zip unzip vim exuberant-ctags && \
+    pip3 install autopep8
 
 # new user as sudoers without password
 # for mac user boot2docker vm "docker" user uid is 1000
 # for linux user, you must change 1000 to your own uid
 RUN \
-  useradd -d $DEVHOME -p $(openssl passwd -crypt tsmc) -u 1000 -m -s /bin/bash $DEVUSER && \
+  useradd -d $DEVHOME -p $(openssl passwd tsmc) -u 1000 -m -s /bin/bash $DEVUSER && \
   usermod -a -G sudo $DEVUSER && \
   chown -R $DEVUSER $DEVHOME && \
   echo "$DEVUSER ALL=NOPASSWD: ALL" >> /etc/sudoers
@@ -38,6 +39,16 @@ RUN \
   echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> $DEVHOME/.bashrc && \
   echo "PS1='\[\033[01m\][\[\033[01;34m\]\u@\h\[\033[00m\]\[\033[01m\] \$(__git_ps1)] \[\033[01;32m\]\w\[\033[00m\]\n\[\033[01;34m\]$\[\033[00m\]> '" >> $DEVHOME/.bashrc
 
+# Install golang for vim-go
+RUN curl -O -L  https://golang.org/dl/go1.20.4.linux-amd64.tar.gz
+COPY ./go1.20.4.linux-amd64.tar.gz /go1.20.4.linux-amd64.tar.gz 
+RUN tar xzf /go1.20.4.linux-amd64.tar.gz
+RUN mv /go /usr/local
+RUN \
+  echo "export GOROOT=/usr/local/go" >> $DEVHOME/.bashrc && \
+  echo "export GOPATH=$DEVHOME/go" >> $DEVHOME/.bashrc && \
+  echo "export PATH=$DEVHOME/go/bin:/usr/local/go/bin:\$PATH " >> $DEVHOME/.bashrc
+RUN mkdir $DEVHOME/go && chown $DEVUSER.$DEVUSER $DEVHOME/go
 
 RUN mkdir $PROJROOT
 

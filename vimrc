@@ -26,10 +26,12 @@ Plugin 'vim-scripts/YankRing.vim'
 Plugin 'vim-scripts/VisIncr'
 
 "Vim motions to the start and end of the current indentation-delimited block
-Plugin 'vim-scripts/indent-motion'
+Plugin 'tmhedberg/indent-motion'
 
 "A tree explorer plugin for navigating the filesystem
 Plugin 'scrooloose/nerdtree'
+
+"Comment functions so powerful—no comment necessary.
 Plugin 'scrooloose/nerdcommenter'
 
 "Inserts matching bracket, paren, brace or quote.
@@ -94,10 +96,10 @@ Plugin 'wincent/Command-T'
 Plugin 'Valloric/YouCompleteMe'
 
 " jeidi-vim
-"Plugin 'davidhalter/jedi-vim'
+Plugin 'davidhalter/jedi-vim'
 
 " vim-go plugin
-Plugin 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plugin 'fatih/vim-go'
 
 " vim-autoformat
 Plugin 'Chiel92/vim-autoformat'
@@ -107,6 +109,15 @@ Plugin 'neo4j-contrib/cypher-vim-syntax'
 
 " vim-vue
 Plugin 'leafOfTree/vim-vue-plugin'
+
+" vim-helm
+Plugin 'towolf/vim-helm'
+
+" dockerfile
+Plugin 'ekalinin/Dockerfile.vim'
+
+" indentLine
+Plugin 'Yggdroot/indentLine'
 
 " General Settings
 set shell=/bin/bash
@@ -476,6 +487,11 @@ let g:go_highlight_generate_tags = 1
 " ------- vim-vue
 let g:vim_vue_plugin_load_full_syntax = 1
 
+" ------- indentLine
+let g:vim_json_conceal=0  "disable json
+let g:markdown_syntax_conceal=0 "disable MArkdown
+"let g:indentLine_enabled = 0 "disable conceal by default
+
 " let Vundle manage Vundle
 
 " ===========================================================
@@ -498,5 +514,10 @@ autocmd BufNewFile,BufNewFile *.py setlocal textwidth=79 tabstop=4 fileformat=un
 
 " yaml
 autocmd FileType yaml setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+"let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+"let g:ale_sign_error = '✘'
+"let g:ale_sign_warning = '⚠'
+"let g:ale_lint_on_text_changed = 'never'
 
 " C/C++ specific settings
